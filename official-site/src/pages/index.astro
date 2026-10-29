@@ -1,0 +1,370 @@
+---
+import PeekCharacter from "../components/PeekCharacter.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WeeklyCalendar from "../components/WeeklyCalendar.astro";
+import HomeAbout from "../components/HomeAbout.astro";
+import { site } from "../data/site";
+import { pageText } from "../data/pages";
+import mediaData from "../content/media.json";
+import { activityItems } from "../data/activity";
+import { socialLinks, getPublicUrl } from "../data/links";
+
+const mainVisualImage = typeof mediaData.mainVisual === "string" &&
+  /^\/images\/[^/\\?#]+\.(png|jpe?g|webp|avif)$/i.test(mediaData.mainVisual)
+  ? mediaData.mainVisual
+  : pageText.home.mainVisualImage;
+
+const media = socialLinks
+  .map((item) => ({ ...item, href: getPublicUrl(item.url) }))
+  .filter((item) => item.href);
+const news = [...activityItems]
+  .filter((item) => item.category === "news")
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .slice(0, 3);
+---
+
+<BaseLayout title="Home">
+  <div class="home">
+    <section class="home-hero" aria-labelledby="home-title">
+      <div class="home-hero__sky" aria-hidden="true">
+        <span class="home-hero__sky-mark home-hero__sky-mark--start">♡</span>
+        <span class="home-hero__sky-mark home-hero__sky-mark--top">☆</span>
+        <span class="home-hero__sky-mark home-hero__sky-mark--turn">♡</span>
+        <span class="home-hero__sky-mark home-hero__sky-mark--end">☆</span>
+      </div>
+      <div class="container home-hero__inner">
+        <div class="home-hero__copy">
+          <div class="home-hero__headline">
+            <p class="eyebrow">WELCOME</p>
+            <h1 id="home-title">
+              {pageText.home.heroFirst}<br />
+              <span>{pageText.home.heroAccent}</span><br />
+              {pageText.home.heroLast}
+            </h1>
+            <p class="home-hero__name">{site.name}</p>
+          </div>
+          <div class="home-hero__summary">
+            <p class="home-hero__lead">{pageText.home.introduction}</p>
+            {
+              media.length > 0 && (
+                <div class="home-hero__media" aria-label="SNSリンク">
+                  {media.map((item) => (
+                    <a
+                      href={item.href!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      referrerpolicy="no-referrer"
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+              )
+            }
+          </div>
+        </div>
+        <div class="home-visual" aria-label="メインビジュアル">
+          <div class="home-visual__glow" aria-hidden="true"></div>
+          <div
+            class="home-visual__back home-visual__back--one"
+            aria-hidden="true"
+          >
+          </div>
+          <div
+            class="home-visual__back home-visual__back--two"
+            aria-hidden="true"
+          >
+          </div>
+          <div class="home-visual__frame">
+            <div class="home-visual__shape">
+              {
+                mainVisualImage ? (
+                  <img
+                    src={mainVisualImage}
+                    alt={pageText.home.mainVisualAlt}
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                    class="home-visual__image"
+                  />
+                ) : (
+                  <p>{pageText.home.mainVisualPlaceholder}</p>
+                )
+              }
+            </div>
+          </div>
+          <span class="home-visual__deco home-visual__deco--one" aria-hidden="true">☆</span>
+          <span class="home-visual__deco home-visual__deco--two" aria-hidden="true">♡</span>
+        </div>
+        <div class="home-hero__actions">
+          <a class="soft-link soft-link--blue" href="/about/">プロフィールを見る</a>
+          <a class="soft-link soft-link--white" href="/social/">配信・SNSを見る</a>
+          <span class="home-hero__action-star" aria-hidden="true">☆</span>
+        </div>
+      </div>
+      <div class="home-hero__bottom" aria-hidden="true"></div>
+    </section>
+
+    <WeeklyCalendar compact />
+
+    <HomeAbout />
+
+    <section class="home-letter" aria-labelledby="home-news-title">
+      <div class="container home-letter__inner">
+        <div class="home-letter__heading">
+          <p class="eyebrow">NEWS</p>
+          <h2 id="home-news-title">
+            最近のお知らせ<span aria-hidden="true"> ♡</span>
+          </h2>
+          <p>新しいお知らせはこちらから。</p>
+          <a class="text-arrow" href="/activity/">活動情報をもっと見る</a>
+        </div>
+        <div class="home-letter__entries">
+          {
+            news.length > 0 ? (
+              news.map((item) => (
+                <article class="home-letter__entry">
+                  <time datetime={item.date}>
+                    {item.date.replaceAll("-", ".")}
+                  </time>
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </article>
+              ))
+            ) : (
+              <p class="home-letter__empty">お知らせは準備中です。</p>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="home-wander" aria-labelledby="home-wander-title">
+      <div class="container">
+        <p class="eyebrow">EXPLORE</p>
+        <h2 id="home-wander-title">いろいろ、のぞいてみる</h2>
+        <div class="home-wander__paths">
+          <a class="home-wander__path" href="/activity/"
+            ><span aria-hidden="true">♡</span><strong>Activity</strong><small
+              >{pageText.home.activityFeature}</small
+            ></a
+          >
+          <a class="home-wander__path" href="/contents/"
+            ><span aria-hidden="true">♡</span><strong>Contents</strong><small
+              >{pageText.home.contentsFeature}</small
+            ></a
+          >
+          <a class="home-wander__path" href="/fan-art/"
+            ><span aria-hidden="true">♡</span><strong>Fan Art</strong><small
+              >ファンアートを見に行く</small
+            ></a
+          >
+          <a class="home-wander__path" href="/social/"
+            ><span aria-hidden="true">♡</span><strong>Social</strong><small
+              >{pageText.home.socialFeature}</small
+            ></a
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="home-goodbye">
+      <div class="container home-goodbye__inner">
+        <div>
+          <p class="eyebrow">CONTACT</p>
+          <h2>お問い合わせ</h2>
+          <p>{pageText.home.contact}</p>
+        </div>
+        <a class="soft-link soft-link--blue" href="/contact/"
+          >お問い合わせはこちら</a
+        >
+      </div>
+    </section>
+  </div>
+  <PeekCharacter />
+</BaseLayout>
+
+<style>
+  .home-visual {
+    width: min(100%, 410px);
+    aspect-ratio: 3 / 4;
+  }
+
+  .home-visual__back {
+    inset: 4%;
+  }
+
+  .home-visual__frame {
+    width: 88%;
+    height: 88%;
+  }
+
+  .home-visual__shape {
+    padding: 0;
+  }
+
+  .home-visual__shape .home-visual__image {
+    display: block;
+    width: 96%;
+    height: 96%;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+
+  .home-hero__inner {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    grid-template-areas:
+      "copy visual"
+      "copy actions";
+    align-items: stretch;
+    column-gap: clamp(26px, 5vw, 78px);
+    row-gap: clamp(12px, 2vw, 22px);
+  }
+
+  .home-hero__copy {
+    grid-area: copy;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: clamp(34px, 5vw, 72px);
+    padding-top: clamp(18px, 4vw, 50px);
+  }
+
+  .home-hero__headline,
+  .home-hero__summary {
+    position: relative;
+    z-index: 2;
+  }
+
+  .home-hero__summary {
+    padding-bottom: clamp(12px, 2vw, 24px);
+  }
+
+  .home-hero__actions {
+    grid-area: actions;
+    position: relative;
+    z-index: 2;
+    justify-self: end;
+    align-self: end;
+    justify-content: flex-end;
+    margin: 0 12px 0 0;
+    padding-bottom: 8px;
+  }
+
+  .home-hero__action-star {
+    position: absolute;
+    right: -20px;
+    bottom: -24px;
+    color: #81b7d6;
+    opacity: .55;
+    font-size: 23px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .home-hero__sky-mark {
+    animation: none;
+    opacity: .75;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--start {
+    left: 4%;
+    top: 12%;
+    font-size: 25px;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--top {
+    left: auto;
+    right: 7%;
+    top: 9%;
+    font-size: 34px;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--turn {
+    left: 5%;
+    top: auto;
+    bottom: 20%;
+    font-size: 25px;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--end {
+    left: auto;
+    right: 4%;
+    top: auto;
+    bottom: 8%;
+    font-size: 20px;
+  }
+
+  .home-visual {
+    grid-area: visual;
+    justify-self: end;
+  }
+
+  .home-visual__deco--one {
+    top: 6%;
+    right: 4%;
+    font-size: 30px;
+  }
+
+  .home-visual__deco--two {
+    left: 2%;
+    right: auto;
+    bottom: 17%;
+    font-size: 22px;
+  }
+
+  @media (max-width: 760px) {
+    .home-hero__inner {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "copy"
+        "visual"
+        "actions";
+      row-gap: 18px;
+    }
+
+    .home-hero__copy {
+      gap: 22px;
+      padding-top: 4px;
+    }
+
+    .home-hero__summary {
+      padding-bottom: 0;
+    }
+
+    .home-visual {
+      justify-self: center;
+      order: initial;
+    }
+
+    .home-hero__actions {
+      justify-self: start;
+      justify-content: flex-start;
+      margin: 0;
+    }
+
+    .home-hero__sky .home-hero__sky-mark--turn,
+    .home-hero__sky .home-hero__sky-mark--end,
+    .home-hero__action-star {
+      display: none;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .home-visual {
+      width: min(100%, 310px);
+      aspect-ratio: 3 / 4;
+    }
+
+    .home-visual__frame {
+      width: 88%;
+      height: 88%;
+    }
+  }
+</style>

@@ -1,0 +1,1200 @@
+---
+interface Props {
+    compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<section
+    class:list={["weekview", { "weekview--compact": compact }]}
+    aria-labelledby="weekview-title"
+>
+    <div class="container weekview__inner">
+        <div class="weekview__heading">
+            <div>
+                <p class="weekview__eyebrow">WEEKLY SCHEDULE</p>
+                {
+                    compact ? (
+                        <h2 id="weekview-title">1週間の予定</h2>
+                    ) : (
+                        <h1 id="weekview-title">1週間の予定</h1>
+                    )
+                }
+                <p class="weekview__description">
+                    配信・イベントの予定をまとめています。
+                </p>
+            </div>
+            <div class="weekview__decor" aria-hidden="true">
+                <span class="weekview__symbol weekview__symbol--heart">♡</span>
+                <span class="weekview__symbol weekview__symbol--star">☆</span>
+                <span class="weekview__symbol weekview__symbol--circle">○</span>
+            </div>
+        </div>
+
+        <div class="weekview__layout">
+            <div class="weekview__board">
+                <div class="weekview__toolbar">
+                    <div class="weekview__period-block">
+                        <span class="weekview__period-label"
+                            >WEEKLY CALENDAR</span
+                        >
+                        <p
+                            class="weekview__period"
+                            data-calendar-period
+                            aria-live="polite"
+                        >
+                            日付を読み込み中
+                        </p>
+                    </div>
+
+                    <div
+                        class="weekview__controls"
+                        aria-label="表示する週を変更"
+                    >
+                        <button
+                            type="button"
+                            data-calendar-prev
+                            aria-label="前の週へ">‹</button
+                        >
+                        <button type="button" data-calendar-now>今週</button>
+                        <button
+                            type="button"
+                            data-calendar-next
+                            aria-label="次の週へ">›</button
+                        >
+                    </div>
+                </div>
+
+                <div
+                    class="weekview__rows"
+                    data-calendar-rows
+                    aria-label="一週間の予定"
+                >
+                </div>
+
+                <p class="weekview__notice" data-calendar-notice hidden>
+                    この週に登録された予定はありません。
+                </p>
+            </div>
+
+            <aside class="weekview__aside" aria-label="次の予定と関連リンク">
+                <div class="weekview__next-card">
+                    <div class="weekview__next-ornaments" aria-hidden="true">
+                        <span>☆</span>
+                        <span>♡</span>
+                        <span>○</span>
+                    </div>
+
+                    <p class="weekview__aside-label">UP NEXT</p>
+                    <h3>次の予定</h3>
+
+                    <div
+                        class="weekview__upcoming"
+                        data-calendar-upcoming
+                        aria-live="polite"
+                    >
+                        <p class="weekview__upcoming-empty">
+                            予定を読み込み中です。
+                        </p>
+                    </div>
+
+                    <p class="weekview__next-note">
+                        予定の変更は、更新後のカレンダーに反映されます。
+                    </p>
+                </div>
+
+                <div class="weekview__links-card">
+                    <p class="weekview__aside-label">STAY CONNECTED</p>
+                    <h3>最新情報をチェック</h3>
+                    <p class="weekview__links-description">
+                        活動のお知らせや更新情報はこちらから。
+                    </p>
+
+                    <div class="weekview__links">
+                        <a href="/social/"
+                            >公式SNS <span aria-hidden="true">↗</span></a
+                        >
+                        <a href="/activity/"
+                            >活動情報 <span aria-hidden="true">→</span></a
+                        >
+                    </div>
+
+                    <span class="weekview__links-star" aria-hidden="true"
+                        >☆</span
+                    >
+                </div>
+            </aside>
+        </div>
+
+        {
+            !compact && (
+                <div class="weekview__footer">
+                    <a href="/">
+                        Homeへ戻る <span aria-hidden="true">→</span>
+                    </a>
+                </div>
+            )
+        }
+    </div>
+</section>
+
+<script>
+    import "../scripts/weekly-calendar";
+</script>
+
+<style is:global>
+    .weekview {
+        padding: clamp(44px, 5vw, 76px) 0 clamp(55px, 6vw, 85px);
+        background:
+            radial-gradient(
+                ellipse 28% 23% at 68% 31%,
+                rgba(179, 221, 243, 0.3),
+                transparent 100%
+            ),
+            radial-gradient(
+                ellipse 22% 20% at 33% 72%,
+                rgba(192, 228, 247, 0.26),
+                transparent 100%
+            ),
+            linear-gradient(150deg, #f8fcff, #e9f5fc 57%, #e4f1fa);
+        overflow-x: clip;
+    }
+
+    .weekview--compact {
+        background:
+            radial-gradient(
+                ellipse 27% 22% at 68% 29%,
+                rgba(190, 226, 246, 0.3),
+                transparent 100%
+            ),
+            var(--color-background, #f9fcff);
+    }
+
+    .weekview__inner {
+        position: relative;
+    }
+
+    .weekview__heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        width: min(100%, 1100px);
+        margin: 0 auto 24px;
+    }
+
+    .weekview__eyebrow,
+    .weekview__aside-label {
+        margin: 0 0 8px;
+        color: #4f91b6;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+    }
+
+    .weekview #weekview-title {
+        margin: 0;
+        color: #285b79;
+        font-size: clamp(25px, 2.8vw, 35px);
+        line-height: 1.4;
+        text-shadow:
+            0 3px rgba(255, 255, 255, 0.72),
+            0 7px 19px rgba(80, 145, 181, 0.14);
+    }
+
+    .weekview__description {
+        margin: 7px 0 0;
+        color: #68899b;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .weekview__decor {
+        position: relative;
+        flex: 0 0 112px;
+        height: 78px;
+        background: radial-gradient(
+            ellipse,
+            rgba(187, 226, 246, 0.48),
+            transparent 70%
+        );
+        pointer-events: none;
+    }
+
+    .weekview__symbol,
+    .weekview__next-ornaments span,
+    .weekview__links-star {
+        position: absolute;
+        font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", sans-serif;
+        line-height: 1;
+        font-weight: 400;
+        user-select: none;
+        pointer-events: none;
+        animation: weekly-float 12s ease-in-out infinite;
+    }
+
+    .weekview__symbol {
+        color: #fff;
+        text-shadow: 0 4px 11px rgba(91, 152, 191, 0.28);
+    }
+
+    .weekview__symbol--heart {
+        top: 10px;
+        left: 20px;
+        font-size: 47px;
+    }
+
+    .weekview__symbol--star {
+        top: 1px;
+        right: 7px;
+        font-size: 28px;
+        animation-delay: -4s;
+    }
+
+    .weekview__symbol--circle {
+        right: 24px;
+        bottom: 3px;
+        font-size: 17px;
+        animation-delay: -8s;
+    }
+
+    .weekview__layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+        gap: clamp(18px, 2.5vw, 28px);
+        align-items: stretch;
+        width: min(100%, 1100px);
+        margin-inline: auto;
+    }
+
+    .weekview__board,
+    .weekview__next-card,
+    .weekview__links-card {
+        min-width: 0;
+        max-width: 100%;
+        border: 1px solid rgba(174, 213, 233, 0.7);
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: 0 17px 43px rgba(86, 148, 184, 0.085);
+        overflow: hidden;
+    }
+
+    .weekview__board {
+        padding: clamp(14px, 1.85vw, 22px);
+    }
+
+    .weekview__toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .weekview__period-block {
+        min-width: 0;
+    }
+
+    .weekview__period-label {
+        color: #6299b8;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.13em;
+    }
+
+    .weekview__period {
+        margin: 4px 0 0;
+        color: #296488;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .weekview__controls {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 5px;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .weekview__controls button {
+        display: grid;
+        place-items: center;
+        min-width: 36px;
+        min-height: 36px;
+        padding: 3px 10px;
+        border: 1px solid #c2deeb;
+        border-radius: 999px;
+        background: #fff;
+        color: #337ca5;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        box-shadow: 0 4px 11px rgba(100, 156, 192, 0.09);
+        cursor: pointer;
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+        flex: 0 0 auto;
+    }
+
+    .weekview__controls button:first-child,
+    .weekview__controls button:last-child {
+        font-size: 23px;
+    }
+
+    .weekview__controls button:hover:not(:disabled) {
+        background: #eaf7fd;
+        transform: translateY(-2px);
+    }
+
+    .weekview__controls button:disabled {
+        opacity: 0.43;
+        cursor: default;
+    }
+
+    .weekview__controls button:focus-visible,
+    .weekview a:focus-visible {
+        outline: 3px solid #559cc5;
+        outline-offset: 3px;
+    }
+
+    .weekview__rows {
+        display: grid;
+        gap: 11px;
+    }
+
+    .weekview__row {
+        position: relative;
+        display: grid;
+        grid-template-columns: 102px minmax(0, 1fr);
+        align-items: center;
+        gap: 0;
+        min-width: 0;
+        max-width: 100%;
+        padding: 10px 11px;
+        border: 1px solid rgba(174, 215, 237, 0.68);
+        border-radius: 32px;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 8px 22px rgba(121, 173, 202, 0.07);
+    }
+
+    .weekview__row--today {
+        border-color: #89c3e4;
+        background: linear-gradient(105deg, #f1faff, #fff 70%);
+    }
+
+    .weekview__date-badge {
+        position: relative;
+        display: block;
+        width: 100px;
+        height: 103px;
+        flex: none;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #326d8c;
+        overflow: visible;
+        z-index: 4;
+    }
+
+    .weekview__date-main {
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 85px;
+        height: 82px;
+    }
+
+    .weekview__date-main-heart,
+    .weekview__date-small-heart {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        filter: drop-shadow(0 4px 4px rgba(81, 159, 199, 0.13));
+    }
+
+    .weekview__date-main-heart path {
+        fill: #abd8ef;
+        stroke: #84bfde;
+        stroke-width: 1.6;
+    }
+
+    .weekview__date-number {
+        position: absolute;
+        top: 30px;
+        left: 0;
+        width: 85px;
+        text-align: center;
+        color: #326d8c;
+        font-size: 23px;
+        font-weight: 850;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        text-shadow: 0 1px 0 #fff;
+    }
+
+    .weekview__date-little {
+        position: absolute;
+        z-index: 1;
+        right: 0;
+        bottom: 0;
+        width: 52px;
+        height: 50px;
+    }
+
+    .weekview__date-small-heart path {
+        fill: #d9f0fb;
+        stroke: #b3dff2;
+        stroke-width: 1.5;
+    }
+
+    .weekview__date-weekday {
+        position: absolute;
+        inset: 21px 0 auto;
+        color: #5b93b0;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1;
+        text-align: center;
+    }
+
+    .weekview__row--today .weekview__date-main-heart path {
+        fill: #95cce9;
+    }
+
+    .weekview__row-content {
+        display: grid;
+        min-width: 0;
+        margin-left: -13px;
+        padding: 0;
+    }
+
+    .weekview__event-list {
+        display: grid;
+        gap: 6px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .weekview__event {
+        position: relative;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        min-height: 76px;
+        overflow: hidden;
+        border-radius: 24px;
+        background: #e1f3fc;
+    }
+
+    .weekview__event-time {
+        display: flex;
+        flex: 0 0 clamp(88px, 24%, 118px);
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        padding: 12px 8px;
+        border: 0;
+        border-radius: 0;
+        background: rgba(136, 197, 229, 0.45);
+        color: #347491;
+        font-size: clamp(14px, 1.35vw, 17px);
+        font-weight: 850;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+        line-height: 1.3;
+        white-space: nowrap;
+    }
+
+    .weekview__event-main {
+        display: grid;
+        flex: 1 1 0;
+        align-content: center;
+        gap: 4px;
+        min-width: 0;
+        padding: 13px 18px 13px 10px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .weekview__event-title-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 6px;
+        min-width: 0;
+    }
+
+    .weekview__event-title {
+        min-width: 0;
+        color: #28688d;
+        font-size: clamp(11px, 1.2vw, 13px);
+        font-weight: 800;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .weekview__event--rest .weekview__event-title,
+    .weekview__event--cancelled .weekview__event-title {
+        color: #708b9e;
+    }
+
+    .weekview__event-detail {
+        margin: 0;
+        color: #718fa4;
+        font-size: 10px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .weekview__status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: #f3f8fd;
+        color: #688aa0;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .weekview__status--live {
+        background: #fff5f5;
+        color: #d05266;
+        box-shadow: inset 0 0 0 1px #f4d6dc;
+    }
+
+    .weekview__status--cancelled {
+        background: #e6edf2;
+        color: #6b7c89;
+    }
+
+    .weekview__event--empty .weekview__event-time {
+        display: none;
+    }
+
+    .weekview__event--empty .weekview__event-main {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+    }
+
+    .weekview__no-event {
+        margin: 0;
+        color: #83a1b5;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.6;
+    }
+
+    a.weekview__event-title {
+        text-decoration: none;
+        text-underline-offset: 4px;
+    }
+
+    a.weekview__event-title:hover {
+        text-decoration: underline;
+    }
+
+    .weekview__today-label {
+        position: absolute;
+        z-index: 6;
+        top: 8px;
+        right: 12px;
+        padding: 2px 8px;
+        border: 1px solid #b3daee;
+        border-radius: 20px;
+        background: #fff;
+        color: #4d94b6;
+        font-size: 9px;
+        font-weight: 900;
+    }
+
+    .weekview__notice {
+        margin: 14px 3px 0;
+        color: #7b99ae;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .weekview__notice[hidden] {
+        display: none;
+    }
+
+    .weekview__aside {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+        gap: 17px;
+        min-width: 0;
+    }
+
+    .weekview__next-card {
+        position: relative;
+        min-height: 320px;
+        padding: clamp(25px, 3vw, 38px);
+        background:
+            radial-gradient(
+                ellipse 26% 29% at 70% 36%,
+                rgba(175, 220, 244, 0.44),
+                transparent 100%
+            ),
+            linear-gradient(150deg, #f8fcff, #e9f5fd);
+    }
+
+    .weekview__next-card h3,
+    .weekview__links-card h3 {
+        position: relative;
+        margin: 0;
+        color: #2b5f7c;
+        font-size: clamp(19px, 2vw, 25px);
+        line-height: 1.5;
+    }
+
+    .weekview__next-ornaments {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .weekview__next-ornaments span {
+        color: rgba(108, 171, 204, 0.32);
+    }
+
+    .weekview__next-ornaments span:nth-child(1) {
+        top: 18px;
+        right: 28px;
+        font-size: 40px;
+    }
+
+    .weekview__next-ornaments span:nth-child(2) {
+        right: 19px;
+        bottom: 28px;
+        font-size: 32px;
+        animation-delay: -4s;
+    }
+
+    .weekview__next-ornaments span:nth-child(3) {
+        right: 83px;
+        bottom: 25px;
+        font-size: 17px;
+        animation-delay: -7s;
+    }
+
+    .weekview__upcoming {
+        position: relative;
+        display: grid;
+        align-content: center;
+        gap: 8px;
+        min-height: 140px;
+        margin-top: 20px;
+        padding: 19px 20px;
+        border: 1px solid rgba(159, 207, 231, 0.67);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.79);
+        box-shadow: 0 9px 23px rgba(101, 162, 197, 0.07);
+    }
+
+    .weekview__upcoming-date {
+        color: #367fa9;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .weekview__upcoming-title {
+        color: #265b7b;
+        font-size: clamp(17px, 1.7vw, 21px);
+        font-weight: 800;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    a.weekview__upcoming-title {
+        text-decoration: none;
+    }
+
+    a.weekview__upcoming-title:hover {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .weekview__upcoming-time {
+        margin: 0;
+        color: #347ca4;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .weekview__upcoming-description {
+        margin: 0;
+        color: #6b8b9e;
+        font-size: 12px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    .weekview__upcoming-empty {
+        margin: 0;
+        color: #7999ac;
+        font-size: 14px;
+        line-height: 1.9;
+    }
+
+    .weekview__next-note {
+        position: relative;
+        margin: 18px 0 0;
+        color: #7b9aab;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .weekview__links-card {
+        position: relative;
+        padding: 25px clamp(25px, 3vw, 38px);
+        background: rgba(255, 255, 255, 0.87);
+    }
+
+    .weekview__links-description {
+        margin: 9px 0 16px;
+        color: #718fa1;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .weekview__links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .weekview__links a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        min-height: 41px;
+        padding: 8px 17px;
+        border: 1px solid #baddeb;
+        border-radius: 999px;
+        background: linear-gradient(145deg, #f9fdff, #eaf7ff);
+        color: #317da4;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .weekview__links a:hover {
+        background: #ddf1fc;
+        transform: translateY(-2px);
+    }
+
+    .weekview__links-star {
+        top: 15px;
+        right: 23px;
+        color: rgba(108, 171, 204, 0.32);
+        font-size: 30px;
+    }
+
+    .weekview__footer {
+        width: min(100%, 1100px);
+        margin: 17px auto 0;
+        text-align: right;
+    }
+
+    .weekview__footer a {
+        color: #397fa7;
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .weekview__footer a:hover {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    @keyframes weekly-float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-7px);
+        }
+    }
+
+    @media (max-width: 940px) {
+        .weekview__layout {
+            grid-template-columns: minmax(0, 1fr);
+            width: min(100%, 680px);
+        }
+
+        .weekview__heading {
+            width: min(100%, 680px);
+        }
+
+        .weekview__aside {
+            grid-template-rows: auto auto;
+        }
+
+        .weekview__next-card {
+            min-height: 0;
+        }
+
+        .weekview__upcoming {
+            min-height: 105px;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .weekview {
+            padding-block: 40px 56px;
+        }
+
+        .weekview__heading {
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .weekview__decor {
+            flex-basis: 74px;
+            height: 58px;
+        }
+
+        .weekview__symbol--heart {
+            top: 8px;
+            left: 5px;
+            font-size: 35px;
+        }
+
+        .weekview__symbol--star {
+            right: 0;
+            font-size: 22px;
+        }
+
+        .weekview__symbol--circle {
+            right: 10px;
+            font-size: 14px;
+        }
+
+        .weekview__board {
+            padding: 14px 12px;
+            border-radius: 24px;
+        }
+
+        .weekview__toolbar {
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .weekview__controls {
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .weekview__period {
+            font-size: 12px;
+        }
+
+        .weekview__controls button {
+            min-width: 35px;
+            min-height: 35px;
+            padding: 3px 8px;
+            font-size: 11px;
+        }
+
+        .weekview__controls button:first-child,
+        .weekview__controls button:last-child {
+            font-size: 20px;
+        }
+
+        .weekview__rows {
+            gap: 10px;
+        }
+
+        .weekview__row {
+            grid-template-columns: 76px minmax(0, 1fr);
+            gap: 6px;
+            min-height: 94px;
+            padding: 9px 9px;
+            border-radius: 25px;
+        }
+
+        .weekview__date-badge {
+            width: 72px;
+            height: 80px;
+        }
+
+        .weekview__date-main {
+            width: 64px;
+            height: 63px;
+        }
+
+        .weekview__date-number {
+            top: 21px;
+            width: 64px;
+            font-size: 18px;
+        }
+
+        .weekview__date-little {
+            width: 39px;
+            height: 38px;
+        }
+
+        .weekview__date-weekday {
+            top: 16px;
+            font-size: 9px;
+        }
+
+        .weekview__row-content {
+            margin-left: -4px;
+        }
+
+        .weekview__event {
+            min-height: 72px;
+            border-radius: 19px;
+        }
+
+        .weekview__event-time {
+            flex-basis: 92px;
+            padding: 10px 6px;
+            font-size: 14px;
+        }
+
+        .weekview__event-main {
+            padding: 10px 12px 10px 8px;
+        }
+
+        .weekview__event-title,
+        .weekview__no-event {
+            font-size: 11px;
+        }
+
+        .weekview__today-label {
+            top: 8px;
+            right: 8px;
+            font-size: 8px;
+        }
+
+        .weekview__next-card,
+        .weekview__links-card {
+            padding: 22px 20px;
+            border-radius: 24px;
+        }
+
+        .weekview__upcoming {
+            padding: 16px 17px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .weekview__heading {
+            gap: 10px;
+        }
+
+        .weekview__board {
+            padding: 12px 10px;
+        }
+
+        .weekview__toolbar {
+            gap: 8px;
+        }
+
+        .weekview__controls {
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .weekview__controls button {
+            min-width: 34px;
+            min-height: 34px;
+            padding: 2px 8px;
+        }
+
+        .weekview__controls button[data-calendar-now] {
+            min-width: 52px;
+        }
+
+        .weekview__row {
+            grid-template-columns: 68px minmax(0, 1fr);
+            gap: 4px;
+            padding: 8px;
+        }
+
+        .weekview__date-badge {
+            width: 64px;
+            height: 72px;
+        }
+
+        .weekview__date-main {
+            width: 58px;
+            height: 57px;
+        }
+
+        .weekview__date-number {
+            top: 19px;
+            width: 58px;
+            font-size: 17px;
+        }
+
+        .weekview__date-little {
+            width: 36px;
+            height: 35px;
+        }
+
+        .weekview__row-content {
+            margin-left: -2px;
+        }
+
+        .weekview__event {
+            min-height: 68px;
+            border-radius: 18px;
+        }
+
+        .weekview__event-time {
+            flex-basis: 84px;
+            font-size: 13px;
+        }
+
+        .weekview__event-main {
+            padding: 9px 10px 9px 7px;
+        }
+
+        .weekview__event--empty .weekview__event-main {
+            padding: 14px 14px;
+        }
+
+        .weekview__today-label {
+            right: 6px;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .weekview__toolbar {
+            grid-template-columns: 1fr;
+        }
+
+        .weekview__controls {
+            justify-content: flex-end;
+        }
+
+        .weekview__row {
+            grid-template-columns: 62px minmax(0, 1fr);
+        }
+
+        .weekview__date-badge {
+            transform: scale(0.92);
+            transform-origin: left center;
+        }
+
+        .weekview__event-time {
+            flex-basis: 76px;
+            font-size: 12px;
+        }
+
+        .weekview__event-main {
+            padding: 8px 8px 8px 6px;
+        }
+
+        .weekview__event-title,
+        .weekview__no-event {
+            font-size: 10px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .weekview__symbol,
+        .weekview__next-ornaments span,
+        .weekview__links-star {
+            animation: none;
+        }
+
+        .weekview__controls button,
+        .weekview__links a {
+            transition: none;
+        }
+
+        .weekview__controls button:hover:not(:disabled),
+        .weekview__links a:hover {
+            transform: none;
+        }
+    }
+
+    .weekview__layout {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .weekview__layout::after {
+        content: "♡";
+        position: absolute;
+        left: 5px;
+        bottom: -28px;
+        color: rgba(108, 171, 204, 0.45);
+        font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", sans-serif;
+        font-size: 25px;
+        line-height: 1;
+        pointer-events: none;
+        user-select: none;
+        transform: rotate(-12deg);
+    }
+
+    .weekview__decor .weekview__symbol--heart,
+    .weekview__decor .weekview__symbol--circle,
+    .weekview__next-ornaments span:nth-child(2),
+    .weekview__next-ornaments span:nth-child(3) {
+        display: none;
+    }
+
+    .weekview__symbol--star {
+        top: 10px;
+        right: 18px;
+        font-size: 34px;
+    }
+
+    .weekview__links-card {
+        padding-bottom: 36px;
+    }
+
+    .weekview__links-star {
+        top: auto;
+        right: 15px;
+        bottom: 6px;
+        font-size: 24px;
+        opacity: 0.65;
+    }
+
+    @media (max-width: 940px) {
+        .weekview__layout::after {
+            display: none;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .weekview__symbol--star {
+            top: 6px;
+            right: 4px;
+            font-size: 23px;
+        }
+    }
+</style>

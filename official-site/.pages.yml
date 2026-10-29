@@ -1,0 +1,189 @@
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: schedule
+    label: 配信・イベント予定
+    type: collection
+    path: src/content/schedule
+    format: json
+    filename: "{primary}.json"
+    view:
+      fields: [title, date, time, repeat, published, status]
+      primary: title
+    fields:
+      - name: published
+        label: 公開する
+        type: boolean
+        default: false
+      - name: title
+        label: 予定名
+        type: string
+        required: true
+      - name: repeat
+        label: 繰り返し
+        type: select
+        default: once
+        options:
+          - value: once
+            label: 日付指定
+          - value: weekly
+            label: 毎週
+      - name: date
+        label: 日付（繰り返しなしの場合）
+        type: date
+      - name: weekday
+        label: 曜日（毎週の場合：日0 月1 火2 水3 木4 金5 土6）
+        type: number
+        default: 1
+      - name: time
+        label: 開始時間（例 20:00）
+        type: string
+      - name: description
+        label: 詳細
+        type: text
+      - name: url
+        label: 配信・イベントURL
+        type: string
+      - name: platform
+        label: 配信先（Twitch / YouTube など）
+        type: string
+      - name: kind
+        label: 予定の種類
+        type: select
+        default: event
+        options:
+          - value: event
+            label: 配信・イベント
+          - value: rest
+            label: おやすみ
+      - name: status
+        label: 表示ステータス（現在は手動更新）
+        type: select
+        default: scheduled
+        options:
+          - value: scheduled
+            label: 予定
+          - value: live
+            label: 配信中
+          - value: ended
+            label: 終了
+          - value: cancelled
+            label: 中止
+      - name: replacesWeekly
+        label: この日は毎週の予定を置き換える（日付指定のみ）
+        type: boolean
+        default: false
+
+  - name: updates
+    label: NEWS・活動情報
+    type: collection
+    path: src/content/updates
+    format: json
+    filename: "{primary}.json"
+    view:
+      fields: [title, date, category, published]
+      primary: title
+    fields:
+      - name: published
+        label: 公開する
+        type: boolean
+        default: false
+      - name: category
+        label: 分類
+        type: select
+        required: true
+        default: news
+        options:
+          - value: news
+            label: NEWS・お知らせ
+          - value: achievement
+            label: 活動実績
+          - value: event
+            label: 大会・イベント
+          - value: collaboration
+            label: コラボ
+          - value: schedule
+            label: 今後の予定
+      - name: date
+        label: 掲載日
+        type: date
+        required: true
+      - name: title
+        label: タイトル
+        type: string
+        required: true
+      - name: description
+        label: 内容
+        type: text
+      - name: url
+        label: 詳細リンク（任意）
+        type: string
+
+  - name: media-library
+    label: 画像（GOODS・FAN ART）
+    type: file
+    path: src/content/media.json
+    fields:
+      - name: mainVisual
+        label: HOMEのメイン画像
+        type: image
+        options:
+          media:
+            input: public/images
+            output: /images
+      - name: goodsNote
+        label: GOODSの紹介文
+        type: text
+      - name: goods
+        label: グッズ画像
+        type: object
+        list: true
+        fields:
+          - name: image
+            label: グッズ画像
+            type: image
+            required: true
+            options:
+              media:
+                input: public/goods
+                output: /goods
+          - name: addedAt
+            label: 並び順用の日時（例 2026-10-29T14:30:00+09:00）
+            type: string
+          - name: published
+            label: 表示する
+            type: boolean
+            default: true
+      - name: fanArt
+        label: ファンアート
+        type: object
+        list: true
+        fields:
+          - name: image
+            label: 作品画像
+            type: image
+            required: true
+            options:
+              media:
+                input: public/images/fan-art
+                output: /images/fan-art
+          - name: title
+            label: 作品タイトル
+            type: string
+            required: true
+          - name: artist
+            label: 作者名
+            type: string
+            required: true
+          - name: artistUrl
+            label: 作者URL
+            type: string
+          - name: alt
+            label: 画像説明
+            type: string
+          - name: permissionGranted
+            label: 掲載許可あり
+            type: boolean
+            default: false

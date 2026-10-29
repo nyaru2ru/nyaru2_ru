@@ -1,0 +1,873 @@
+<script>
+  type SymbolMark = "♡" | "☆" | "○";
+  type Tone = "focus" | "trail" | "soft";
+
+  type MarkPlacement = readonly [
+    mark: SymbolMark,
+    x: number,
+    y: number,
+    size: number,
+    tone?: Tone,
+    desktopOnly?: boolean,
+  ];
+
+  type StreamPlacement = readonly [
+    x: number,
+    y: number,
+    width: string,
+    height: number,
+    angle: number,
+    opacity?: number,
+    desktopOnly?: boolean,
+  ];
+
+  type Zone = {
+    selector: string;
+    anchor?: string;
+    marks?: MarkPlacement[];
+    streams?: StreamPlacement[];
+  };
+
+  const zones: Zone[] = [
+    {
+      selector: ".home-hero",
+      marks: [
+        ["☆", 10, 15, 28, "focus"],
+        ["♡", 22, 28, 18, "trail", true],
+        ["☆", 77, 18, 22, "focus"],
+        ["♡", 89, 32, 18, "trail"],
+        ["○", 94, 48, 11, "soft", true],
+        ["☆", 73, 77, 17, "trail", true],
+      ],
+    },
+    {
+      selector: ".home-hero",
+      anchor:
+        ".home-visual__frame, .home-visual, .home-hero__visual, .home-main-visual",
+      marks: [
+        ["☆", -10, 10, 20, "focus"],
+        ["♡", -14, 34, 17, "trail"],
+        ["○", -8, 62, 10, "soft", true],
+        ["☆", -2, 90, 16, "trail", true],
+        ["♡", 104, 10, 17, "trail"],
+        ["☆", 110, 34, 20, "focus"],
+        ["○", 106, 62, 10, "soft", true],
+        ["♡", 102, 90, 16, "trail", true],
+      ],
+    },
+    {
+      selector: ".weekview",
+      streams: [[52, 10, "142%", 94, -7, 0.4]],
+    },
+    {
+      selector: ".weekview__heading",
+      marks: [
+        ["☆", 14, 24, 22, "focus"],
+        ["○", 28, 33, 10, "soft", true],
+        ["♡", 30, 82, 16, "trail", true],
+        ["☆", 74, 26, 20, "focus"],
+        ["○", 88, 36, 10, "soft", true],
+        ["♡", 92, 72, 16, "trail"],
+      ],
+    },
+    {
+      selector: ".weekview__links-card",
+      marks: [
+        ["☆", 10, 18, 18, "focus"],
+        ["♡", 22, 31, 14, "trail", true],
+        ["♡", 82, 18, 18, "focus"],
+        ["☆", 88, 78, 14, "trail"],
+      ],
+    },
+    {
+      selector: ".home-about__copy",
+      marks: [
+        ["☆", 10, 20, 22, "focus"],
+        ["♡", 22, 34, 16, "trail", true],
+        ["☆", 72, 22, 19, "focus"],
+        ["○", 86, 32, 10, "soft", true],
+        ["♡", 18, 84, 14, "trail"],
+        ["☆", 84, 82, 16, "focus"],
+      ],
+    },
+    {
+      selector: ".home-about__visual",
+      anchor:
+        ".home-about__visual-frame, .home-about__image, .home-about__visual-placeholder",
+      marks: [
+        ["☆", -10, 12, 18, "focus"],
+        ["♡", -12, 48, 15, "trail"],
+        ["○", -6, 84, 10, "soft", true],
+        ["♡", 106, 12, 16, "focus"],
+        ["☆", 112, 48, 18, "focus"],
+        ["♡", 104, 84, 15, "trail"],
+      ],
+    },
+    {
+      selector: ".home-letter__inner",
+      streams: [[50, 12, "132%", 82, -6, 0.3]],
+      marks: [
+        ["☆", 10, 18, 22, "focus"],
+        ["♡", 22, 31, 15, "trail", true],
+        ["☆", 78, 20, 20, "focus"],
+        ["♡", 90, 34, 15, "trail"],
+        ["♡", 18, 84, 14, "trail"],
+        ["☆", 86, 84, 16, "focus"],
+      ],
+    },
+    {
+      selector: ".home-wander > .container",
+      streams: [[50, 12, "132%", 80, -5, 0.28]],
+      marks: [
+        ["☆", 10, 18, 22, "focus"],
+        ["♡", 24, 32, 15, "trail", true],
+        ["☆", 78, 20, 20, "focus"],
+        ["♡", 90, 34, 15, "trail"],
+        ["♡", 16, 82, 14, "trail"],
+        ["☆", 84, 84, 16, "focus"],
+      ],
+    },
+    {
+      selector: ".home-goodbye__inner",
+      marks: [
+        ["♡", 10, 20, 18, "focus"],
+        ["☆", 82, 20, 18, "focus"],
+        ["♡", 16, 86, 14, "trail"],
+        ["☆", 86, 84, 14, "trail"],
+      ],
+    },
+    {
+      selector: ".page-intro",
+      streams: [[50, 12, "134%", 84, -7, 0.3]],
+      marks: [
+        ["☆", 12, 20, 20, "focus"],
+        ["♡", 22, 32, 14, "trail", true],
+        ["♡", 78, 20, 18, "focus"],
+        ["☆", 90, 34, 14, "trail"],
+        ["☆", 14, 84, 13, "trail"],
+        ["♡", 86, 84, 14, "trail"],
+      ],
+    },
+    {
+      selector: ".activity-diary__chapter",
+      marks: [
+        ["☆", 86, 16, 16, "focus"],
+        ["♡", 12, 88, 12, "trail", true],
+      ],
+    },
+    {
+      selector: ".contents-island",
+      marks: [
+        ["♡", 86, 16, 16, "focus"],
+        ["☆", 12, 88, 12, "trail", true],
+      ],
+    },
+    {
+      selector: ".social-stream__line",
+      marks: [
+        ["☆", 86, 16, 15, "focus"],
+        ["♡", 12, 88, 11, "trail", true],
+      ],
+    },
+    {
+      selector: ".fanart-gallery",
+      marks: [
+        ["♡", 86, 16, 16, "focus"],
+        ["☆", 12, 88, 12, "trail", true],
+      ],
+    },
+    {
+      selector: ".fanart-footnotes section",
+      marks: [
+        ["☆", 86, 16, 14, "focus"],
+        ["♡", 12, 88, 11, "trail", true],
+      ],
+    },
+    {
+      selector: ".guideline-note",
+      marks: [
+        ["♡", 86, 16, 15, "focus"],
+        ["☆", 12, 88, 11, "trail", true],
+      ],
+    },
+    {
+      selector: ".contact-letter",
+      marks: [
+        ["☆", 84, 18, 18, "focus"],
+        ["♡", 14, 86, 12, "trail", true],
+      ],
+    },
+    {
+      selector: ".contact-notes",
+      marks: [
+        ["♡", 86, 18, 16, "focus"],
+        ["☆", 12, 86, 12, "trail", true],
+      ],
+    },
+  ];
+
+  const SMALL = 600;
+  const MEDIUM = 980;
+
+  const avoidSelector = [
+    "h1",
+    "h2",
+    "h3",
+    "p",
+    "a",
+    "button",
+    "input",
+    "select",
+    "textarea",
+    ".home-visual__frame",
+    ".home-about__visual-frame",
+    ".weekview__board",
+    ".weekview__next-card",
+    ".weekview__links-card",
+    ".home-wander__path",
+    ".home-letter__entry",
+  ].join(",");
+
+  function rectsOverlap(
+    a: {
+      left: number;
+      top: number;
+      right: number;
+      bottom: number;
+    },
+    b: {
+      left: number;
+      top: number;
+      right: number;
+      bottom: number;
+    },
+    padding = 8,
+  ): boolean {
+    return (
+      a.left < b.right + padding &&
+      a.right > b.left - padding &&
+      a.top < b.bottom + padding &&
+      a.bottom > b.top - padding
+    );
+  }
+
+  function getPoint(
+    targetRect: DOMRect,
+    anchorRect: DOMRect,
+    x: number,
+    y: number,
+  ) {
+    return {
+      left: anchorRect.left - targetRect.left + (anchorRect.width * x) / 100,
+      top: anchorRect.top - targetRect.top + (anchorRect.height * y) / 100,
+    };
+  }
+
+  function getExclusions(target: HTMLElement): DOMRect[] {
+    return Array.from(target.querySelectorAll<HTMLElement>(avoidSelector))
+      .filter((element) => {
+        if (element.closest(".site-decor-layer")) {
+          return false;
+        }
+
+        const style = window.getComputedStyle(element);
+
+        return style.display !== "none" && style.visibility !== "hidden";
+      })
+      .map((element) => element.getBoundingClientRect())
+      .filter((rect) => rect.width > 0 && rect.height > 0);
+  }
+
+  function findSafePosition(
+    targetRect: DOMRect,
+    anchorRect: DOMRect,
+    x: number,
+    y: number,
+    size: number,
+    exclusions: DOMRect[],
+    isSmall: boolean,
+  ): {
+    left: number;
+    top: number;
+  } | null {
+    const point = getPoint(targetRect, anchorRect, x, y);
+
+    const shifts = isSmall
+      ? [
+          [0, 0],
+          [0, -18],
+          [0, 18],
+          [-17, -10],
+          [17, -10],
+        ]
+      : [
+          [0, 0],
+          [0, -20],
+          [0, 20],
+          [-22, 0],
+          [22, 0],
+          [-28, -20],
+          [28, -20],
+        ];
+
+    const radius = size * (isSmall ? 0.43 : 0.53) + 3;
+
+    for (const [dx, dy] of shifts) {
+      const pageX = targetRect.left + point.left + dx;
+
+      const pageY = targetRect.top + point.top + dy;
+
+      const bounds = {
+        left: pageX - radius,
+        right: pageX + radius,
+        top: pageY - radius,
+        bottom: pageY + radius,
+      };
+
+      if (bounds.left < 8 || bounds.right > window.innerWidth - 8) {
+        continue;
+      }
+
+      if (
+        bounds.top < targetRect.top - 12 ||
+        bounds.bottom > targetRect.bottom + 12
+      ) {
+        continue;
+      }
+
+      if (
+        exclusions.some((rect) => rectsOverlap(bounds, rect, isSmall ? 10 : 12))
+      ) {
+        continue;
+      }
+
+      return {
+        left: point.left + dx,
+        top: point.top + dy,
+      };
+    }
+
+    return null;
+  }
+
+  function buildMark(
+    mark: SymbolMark,
+    left: number,
+    top: number,
+    size: number,
+    tone: Tone,
+    index: number,
+    scale: number,
+  ): HTMLSpanElement {
+    const symbol = document.createElement("span");
+
+    symbol.className = `site-mark site-mark--${tone}`;
+
+    symbol.textContent = mark;
+
+    symbol.style.left = `${left}px`;
+    symbol.style.top = `${top}px`;
+
+    symbol.style.setProperty("--mark-size", `${Math.round(size * scale)}px`);
+
+    symbol.style.setProperty(
+      "--mark-delay",
+      `${-((index * 2.4 + left / 11) % 14)}s`,
+    );
+
+    symbol.style.setProperty("--mark-speed", `${11 + ((index * 2) % 6)}s`);
+
+    return symbol;
+  }
+
+  function buildStream(
+    targetRect: DOMRect,
+    placement: StreamPlacement,
+    index: number,
+  ): HTMLSpanElement {
+    const [x, y, width, height, angle, opacity = 0.3] = placement;
+
+    const point = getPoint(targetRect, targetRect, x, y);
+
+    const stream = document.createElement("span");
+
+    stream.className = "site-stream";
+
+    stream.style.left = `${point.left}px`;
+    stream.style.top = `${point.top}px`;
+
+    stream.style.setProperty("--stream-width", width);
+
+    stream.style.setProperty("--stream-height", `${height}px`);
+
+    stream.style.setProperty("--stream-angle", `${angle}deg`);
+
+    stream.style.setProperty("--stream-opacity", `${opacity}`);
+
+    stream.style.setProperty(
+      "--stream-delay",
+      `${-((index * 1.7 + x / 13) % 10)}s`,
+    );
+
+    return stream;
+  }
+
+  let resizeTimer = 0;
+  let observer: ResizeObserver | null = null;
+  let mounting = false;
+
+  function mountDecorations() {
+    if (mounting) return;
+
+    mounting = true;
+
+    try {
+      observer?.disconnect();
+
+      document
+        .querySelectorAll<HTMLElement>(".site-decor-layer")
+        .forEach((node) => node.remove());
+
+      document
+        .querySelectorAll<HTMLElement>("[data-site-decorated]")
+        .forEach((node) => {
+          node.removeAttribute("data-site-decorated");
+        });
+
+      const isSmall = window.innerWidth <= SMALL;
+
+      const isMedium = window.innerWidth <= MEDIUM;
+
+      const scale = isSmall ? 0.78 : isMedium ? 0.9 : 1;
+
+      const pagePath = window.location.pathname.replace(/\/+$/, "") || "/";
+
+      const showStreams = pagePath === "/" || pagePath === "/about";
+
+      observer =
+        typeof ResizeObserver !== "undefined"
+          ? new ResizeObserver(() => scheduleDecorations())
+          : null;
+
+      const observed = new Set<Element>();
+
+      for (const zone of zones) {
+        document
+          .querySelectorAll<HTMLElement>(zone.selector)
+          .forEach((target) => {
+            const anchor = zone.anchor
+              ? (target.querySelector(zone.anchor) ?? target)
+              : target;
+
+            const targetRect = target.getBoundingClientRect();
+
+            const anchorRect = anchor.getBoundingClientRect();
+
+            if (!targetRect.width || !targetRect.height) {
+              return;
+            }
+
+            if (observer && !observed.has(target)) {
+              observer.observe(target);
+              observed.add(target);
+            }
+
+            if (observer && anchor !== target && !observed.has(anchor)) {
+              observer.observe(anchor);
+              observed.add(anchor);
+            }
+
+            const layer = document.createElement("div");
+
+            layer.className = "site-decor-layer";
+
+            layer.setAttribute("aria-hidden", "true");
+
+            if (!isMedium && showStreams) {
+              const streams =
+                zone.selector === ".page-intro" && pagePath !== "/about"
+                  ? []
+                  : (zone.streams ?? []);
+
+              streams.forEach((placement, index) => {
+                layer.appendChild(buildStream(targetRect, placement, index));
+              });
+            }
+
+            const exclusions = getExclusions(target);
+
+            const marks = (zone.marks ?? [])
+              .filter(([, , , , , desktopOnly]) => !isMedium || !desktopOnly)
+              .filter(([, , , , tone]) => !isSmall || tone !== "soft");
+
+            const limit = isSmall ? 3 : isMedium ? 5 : 99;
+
+            let placed = 0;
+
+            marks.forEach(([mark, x, y, size, tone = "trail"], index) => {
+              if (placed >= limit) {
+                return;
+              }
+
+              const sizeScaled = Math.round(size * scale);
+
+              const point = findSafePosition(
+                targetRect,
+                anchorRect,
+                x,
+                y,
+                sizeScaled,
+                exclusions,
+                isSmall,
+              );
+
+              if (!point) {
+                return;
+              }
+
+              layer.appendChild(
+                buildMark(
+                  mark,
+                  point.left,
+                  point.top,
+                  size,
+                  tone,
+                  index,
+                  scale,
+                ),
+              );
+
+              placed++;
+            });
+
+            if (layer.childNodes.length === 0) {
+              return;
+            }
+
+            target.setAttribute("data-site-decorated", "");
+
+            target.appendChild(layer);
+          });
+      }
+
+      document.documentElement.classList.add("site-decor-ready");
+    } finally {
+      mounting = false;
+    }
+  }
+
+  function scheduleDecorations() {
+    window.clearTimeout(resizeTimer);
+
+    resizeTimer = window.setTimeout(mountDecorations, 140);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountDecorations, {
+      once: true,
+    });
+  } else {
+    mountDecorations();
+  }
+
+  window.addEventListener("load", scheduleDecorations, { once: true });
+
+  window.addEventListener("resize", scheduleDecorations, { passive: true });
+
+  window.addEventListener("orientationchange", scheduleDecorations);
+
+  document.addEventListener("astro:page-load", mountDecorations);
+
+  document.fonts?.ready.then(scheduleDecorations).catch(() => {});
+</script>
+
+<style is:global>
+  :root {
+    --site-mark-color: #79b4d6;
+    --site-mark-muted: #9db8d7;
+    --site-mark-float: 6px;
+  }
+
+  [data-site-decorated] {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .site-decor-ready .home-hero {
+    padding-bottom: clamp(54px, 5vw, 76px);
+  }
+
+  .site-decor-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    user-select: none;
+    overflow: visible;
+    contain: layout style;
+  }
+
+  .home-hero__bottom {
+    display: none !important;
+  }
+
+  .site-stream {
+    position: absolute;
+    width: var(--stream-width);
+    height: var(--stream-height);
+
+    transform: translate(-50%, -50%) rotate(var(--stream-angle));
+
+    transform-origin: center;
+    opacity: var(--stream-opacity);
+    border-radius: 999px;
+
+    background: linear-gradient(
+      90deg,
+      rgba(186, 220, 241, 0.14) 0%,
+      rgba(186, 220, 241, 0.24) 28%,
+      rgba(186, 220, 241, 0.38) 56%,
+      rgba(186, 220, 241, 0.58) 78%,
+      rgba(186, 220, 241, 0.74) 100%
+    );
+
+    clip-path: polygon(0 68%, 0 88%, 100% 0, 100% 100%);
+
+    filter: blur(0.2px);
+
+    animation: site-stream-drift 14s ease-in-out infinite;
+
+    animation-delay: var(--stream-delay);
+  }
+
+  .site-mark {
+    position: absolute;
+    display: inline-block;
+
+    font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", sans-serif;
+
+    font-size: var(--mark-size);
+    line-height: 1;
+    font-weight: 400;
+    white-space: nowrap;
+
+    color: var(--site-mark-color);
+
+    transform: translate(-50%, -50%);
+
+    text-shadow: 0 2px 8px rgba(110, 169, 206, 0.12);
+
+    animation: site-mark-float var(--mark-speed) ease-in-out infinite;
+
+    animation-delay: var(--mark-delay);
+  }
+
+  .site-mark--focus {
+    opacity: 0.66;
+  }
+
+  .site-mark--trail {
+    opacity: 0.48;
+    color: var(--site-mark-muted);
+  }
+
+  .site-mark--soft {
+    opacity: 0.24;
+  }
+
+  @keyframes site-mark-float {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) translate(0, 0) rotate(-3deg);
+    }
+
+    50% {
+      transform: translate(-50%, -50%)
+        translate(2px, calc(-1 * var(--site-mark-float))) rotate(3deg);
+    }
+  }
+
+  @keyframes site-stream-drift {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) rotate(var(--stream-angle)) translateX(0);
+    }
+
+    50% {
+      transform: translate(-49%, -51%) rotate(var(--stream-angle))
+        translateX(5px);
+    }
+  }
+
+  .site-decor-ready .home-hero__sky,
+  .site-decor-ready .home-visual__deco,
+  .site-decor-ready .home-hero__action-star,
+  .site-decor-ready .home-about__turn-mark,
+  .site-decor-ready .home-about__visual-deco,
+  .site-decor-ready .page-intro__decor,
+  .site-decor-ready .weekview__decor,
+  .site-decor-ready .weekview__next-ornaments,
+  .site-decor-ready .weekview__links-star,
+  .site-decor-ready .about-page__pearl,
+  .site-decor-ready .contact-letter__decor,
+  .site-decor-ready .fanart-gallery__heading h2 span,
+  .site-decor-ready .home-letter h2 span {
+    display: none;
+  }
+
+  .site-decor-ready .social-stream__symbol,
+  .site-decor-ready .guideline-note__mark,
+  .site-decor-ready .activity-diary__heading > span {
+    opacity: 0.55;
+  }
+
+  @media (max-width: 980px) {
+    :root {
+      --site-mark-float: 4px;
+    }
+
+    .site-stream {
+      display: none;
+    }
+
+    .site-decor-ready .home-hero .home-hero__inner {
+      grid-template-columns: minmax(0, 1fr);
+
+      grid-template-areas:
+        "copy"
+        "visual"
+        "actions";
+
+      gap: 20px;
+    }
+
+    .site-decor-ready .home-hero .home-hero__copy {
+      gap: 18px;
+      padding-top: 0;
+    }
+
+    .site-decor-ready .home-hero .home-visual {
+      justify-self: center;
+      width: min(100%, 360px);
+      max-width: 100%;
+    }
+
+    .site-decor-ready .home-hero .home-hero__actions {
+      justify-self: start;
+      margin: 0;
+      padding-bottom: 0;
+      justify-content: flex-start;
+    }
+
+    .site-decor-ready .home-about .home-about__inner,
+    .site-decor-ready .home-letter .home-letter__inner {
+      grid-template-columns: minmax(0, 1fr);
+
+      gap: 26px;
+    }
+
+    .site-decor-ready .home-about .home-about__visual {
+      width: min(100%, 340px);
+      margin-inline: auto;
+    }
+
+    .site-decor-ready .home-goodbye .home-goodbye__inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .site-decor-ready .weekview .weekview__layout {
+      grid-template-columns: minmax(0, 1fr);
+
+      width: min(100%, 720px);
+    }
+
+    .site-decor-ready .weekview .weekview__heading {
+      width: min(100%, 720px);
+    }
+
+    .site-decor-ready .weekview .weekview__aside {
+      grid-template-rows: auto auto;
+    }
+  }
+
+  @media (max-width: 600px) {
+    :root {
+      --site-mark-float: 2px;
+      --page-gutter: clamp(14px, 4vw, 24px);
+    }
+
+    .site-mark--focus {
+      opacity: 0.46;
+    }
+
+    .site-mark--trail {
+      opacity: 0.32;
+    }
+
+    .site-mark--soft {
+      opacity: 0.18;
+    }
+
+    .site-decor-ready .home-hero {
+      padding-bottom: 50px;
+    }
+
+    .site-decor-ready .home-hero .home-visual {
+      width: min(100%, 300px);
+    }
+
+    .site-decor-ready .home-hero .home-hero__actions {
+      width: 100%;
+      gap: 10px;
+    }
+
+    .site-decor-ready .home-about .home-about__visual {
+      width: min(100%, 285px);
+    }
+
+    .site-decor-ready .home-letter .home-letter__entries {
+      padding-left: 20px;
+    }
+
+    .site-decor-ready .home-goodbye .home-goodbye__inner {
+      gap: 18px;
+      padding: 28px 20px;
+    }
+  }
+
+  @media (max-width: 390px) {
+    .site-decor-ready .home-hero .home-hero__actions .soft-link {
+      width: 100%;
+      max-width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .site-decor-ready .home-wander .home-wander__paths {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+    }
+
+    .site-decor-ready .home-wander .home-wander__path {
+      width: min(100%, 270px);
+      margin-top: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-mark,
+    .site-stream {
+      animation: none;
+    }
+
+    .site-mark {
+      transform: translate(-50%, -50%);
+    }
+
+    .site-stream {
+      transform: translate(-50%, -50%) rotate(var(--stream-angle));
+    }
+  }
+</style>

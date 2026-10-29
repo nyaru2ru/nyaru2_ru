@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import { socialLinks, getPublicUrl } from "../data/links";
+import { pageText } from "../data/pages";
+const links = socialLinks.map((item) => ({ ...item, href: getPublicUrl(item.url) }));
+---
+
+<BaseLayout title="Social">
+  <section class="section social-page">
+    <div class="container">
+      <PageHeader label="SOCIAL" title="つながる場所" description={pageText.social.introduction} />
+      <div class="social-stream">
+        {links.map((item) => (
+          <article class="social-stream__line">
+            <span class="social-stream__symbol" aria-hidden="true">♡</span>
+            <div>
+              <h2>{item.label}</h2>
+              <p>{item.description}</p>
+            </div>
+            {item.href ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" aria-label={`${item.label}を新しいタブで開く`}>
+                見にいく
+              </a>
+            ) : (
+              <span class="social-stream__soon">準備中</span>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

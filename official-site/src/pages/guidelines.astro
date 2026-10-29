@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import { pageText } from "../data/pages";
+const guidelines = [
+  { label: "STREAMING", title: "配信について", text: pageText.guidelines.streaming },
+  { label: "FAN CREATIONS", title: "二次創作について", text: pageText.guidelines.secondaryCreation },
+  { label: "CLIPS", title: "切り抜きについて", text: pageText.guidelines.clips }
+];
+---
+
+<BaseLayout title="Guidelines">
+  <section class="section guidelines-page">
+    <div class="container">
+      <PageHeader label="GUIDELINES" title="みんなへのお願い" description={pageText.guidelines.introduction} />
+      <div class="guideline-notes">
+        {guidelines.map((item, index) => <section class="guideline-note">
+          <span class="guideline-note__mark" aria-hidden="true">{index % 2 ? "♡" : "☆"}</span>
+          <div><p class="eyebrow">{item.label}</p><h2>{item.title}</h2><p>{item.text}</p>{index === 1 && <a class="text-arrow" href="/fan-art/">Fan Artを見る ↗</a>}</div>
+        </section>)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

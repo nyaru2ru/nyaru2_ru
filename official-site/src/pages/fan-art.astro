@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import { pageText } from "../data/pages";
+import mediaData from "../content/media.json";
+import { getPublicUrl } from "../data/links";
+type FanArtEntry = {
+  title: string;
+  artist: string;
+  image: string;
+  alt?: string;
+  permissionGranted?: boolean;
+  artistUrl?: string;
+};
+const fanArtItems: FanArtEntry[] = mediaData.fanArt;
+const gallery = fanArtItems.filter((item) =>
+  item.permissionGranted === true &&
+  typeof item.title === "string" &&
+  typeof item.artist === "string" &&
+  typeof item.image === "string" &&
+  /^\/images\/fan-art\/[^/\\?#]+\.(png|jpe?g|webp|avif)$/i.test(item.image) &&
+  !item.image.includes(".."),
+);
+---
+
+<BaseLayout title="Fan Art">
+  <section class="section fanart-page">
+    <div class="container">
+      <PageHeader label="FAN ART" title="みんなの宝物" description={pageText.fanArt.introduction} />
+      <div class="fanart-gallery">
+        <div class="fanart-gallery__heading"><h2>Gallery <span aria-hidden="true">☆</span></h2><span>{gallery.length} works</span></div>
+        {gallery.length > 0 ? <>
+          <div class="fanart-gallery__grid" id="fanart-items">
+            {gallery.map((item, index) => {
+              const artistUrl = getPublicUrl(item.artistUrl ?? null);
+              return <figure class="fanart-item" data-fanart-item>
+                <a href={item.image} target="_blank" rel="noopener noreferrer" aria-label={`${item.title}の画像を新しいタブで開く`}><img src={item.image} alt={item.alt || item.title} loading={index < 4 ? "eager" : "lazy"} decoding="async" /></a>
+                <figcaption><strong>{item.title}</strong>{artistUrl ? <a href={artistUrl} target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{item.artist} さん ↗</a> : <span>{item.artist} さん</span>}</figcaption>
+              </figure>;
+            })}
+          </div>
+          {gallery.length > 12 && <button class="soft-link soft-link--white fanart-gallery__more" type="button" data-fanart-more aria-controls="fanart-items" hidden>もっと見る ＋</button>}
+        </> : <p class="fanart-gallery__empty">ギャラリーは準備中です。掲載許可をいただいた作品をこちらで紹介します。</p>}
+      </div>
+      <div class="fanart-footnotes">
+        <section><p class="eyebrow">POST</p><h2>投稿について</h2><p>{pageText.fanArt.howToPost}</p></section>
+        <section><p class="eyebrow">PERMISSION</p><h2>掲載・利用について</h2><p>{pageText.fanArt.usage}</p><a class="text-arrow" href="/guidelines/">二次創作ガイドライン ↗</a></section>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>("[data-fanart-more]");
+  const images = [...document.querySelectorAll<HTMLElement>("[data-fanart-item]")];
+  if (button && images.length > 12) {
+    let shown = 12;
+    const update = () => {
+      images.forEach((item, index) => { item.hidden = index >= shown; });
+      button.hidden = shown >= images.length;
+    };
+    button.addEventListener("click", () => { shown += 12; update(); });
+    update();
+  }
+</script>
