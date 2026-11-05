@@ -46,6 +46,7 @@ body {
 
 body::before {
   content: "";
+
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -243,7 +244,7 @@ summary:focus-visible {
   border: 1px solid rgba(179, 214, 233, .8);
   border-radius: 999px;
   font-weight: 800;
-  font-size: clamp(12px, 1.2vw, 16px);
+  font-size: clamp(11px, 1.2vw, 15px);
   transition: transform .25s, box-shadow .25s;
 }
 
@@ -267,7 +268,7 @@ summary:focus-visible {
 .text-arrow {
   display: inline-block;
   color: #4689ac;
-  font-size: clamp(12px, 1.2vw, 14px);
+  font-size: clamp(11px, 1.2vw, 14px);
   font-weight: 800;
   transition: transform .25s;
 }
@@ -326,7 +327,7 @@ summary:focus-visible {
 .page-intro__description {
     max-width: 100%;
     color: #678ca1;
-    font-size: clamp(18px, 2vw, 21px);
+    font-size: clamp(14px, 2vw, 20px);
     line-height: 1.9;
     white-space: pre-line;
     overflow-wrap: anywhere;
@@ -411,14 +412,14 @@ summary:focus-visible {
 .home-hero__name {
   margin-bottom: 8px;
   color: #5997ba;
-  font-size: clamp(26px, 4vw, 48px);
+  font-size: clamp(14px, 4vw, 22px);
   font-weight: 800;
 }
 
 .home-hero__lead {
   max-width: none;
   color: #7394a7;
-  font-size: clamp(16px, 1.8vw, 20px);
+  font-size: clamp(12px, 1.8vw, 15px);
   line-height: 2;
   white-space: pre-line;
   overflow-wrap: break-word;
@@ -660,7 +661,7 @@ summary:focus-visible {
 .home-about__copy>p:not(.eyebrow) {
   max-width: 47ch;
   color: #698da2;
-  font-size: 16.5px;
+  font-size: 15px;
   line-height: 2.3;
   white-space: pre-line;
 }
@@ -2010,7 +2011,7 @@ summary:focus-visible {
 }
 
 .weekview .weekview__heading #weekview-title {
-  font-size: clamp(23px, 2.6vw, 31px);
+  font-size: clamp(14px, 2.6vw, 25px);
 }
 
 .about-page .about-page__hero .about-page__copy .about-page__lead {
