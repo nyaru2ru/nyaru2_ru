@@ -1,10 +1,12 @@
 
 export const pageText = {
     home: {
-        heroFirst: "ここに",
-        heroAccent: "キャッチコピーを",
-        heroLast: "入れる",
-        introduction: "ここに紹介文を入れる。",
+        heroFirst: "キミを癒したい",
+        heroAccent: "にゃんこ天使",
+        heroLast: "",
+        introduction: "みんなに癒しをお届けするのが大好きなにゃんこ天使🪽
+毎日18時からTwitchでFPSや歌枠の配信をしています
+YouTubeでは不定期的に読み聞かせ、歌ってみた、ラジオを公開しています",
         mainVisualImage: "/images/main-visual.png" as string | null,
         mainVisualAlt: "メインビジュアル",
         mainVisualPlaceholder: "ここにメインビジュアルを入れる",
