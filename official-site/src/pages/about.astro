@@ -72,7 +72,16 @@ import { getPublicUrl } from "../data/links";
           <section class="about-page__card about-page__card--story">
             <p class="eyebrow">MY STORY</p>
             <h2>これまでのこと</h2>
-            <p>{pageText.about.history}</p>
+            <p id="about-story" class="about-page__story-text">{pageText.about.history}</p>
+            <button
+              type="button"
+              class="about-page__story-toggle"
+              aria-controls="about-story"
+              aria-expanded="false"
+              hidden
+            >
+              もっと見る
+            </button>
           </section>
 
           <section class="about-page__card about-page__card--future">
@@ -86,7 +95,7 @@ import { getPublicUrl } from "../data/links";
       <div class="about-page__meta">
         <section class="about-page__softbox">
           <p class="eyebrow">ACTIVITIES</p>
-          <h2>活動ジャンル</h2>
+          <h2>主な配信タイトル</h2>
           {
             activityGenres.length > 0 ? (
               <ul class="about-page__chips">
@@ -95,7 +104,7 @@ import { getPublicUrl } from "../data/links";
                 ))}
               </ul>
             ) : (
-              <p>活動ジャンルは準備中です。</p>
+              <p>OverWatch2　Apex　新幹線 0号　ミサイド etc...</p>
             )
           }
         </section>
@@ -140,6 +149,52 @@ import { getPublicUrl } from "../data/links";
 </BaseLayout>
 
 <style>
+.about-page__softbox > p:not(.eyebrow),
+.about-page__card--large > p:not(.eyebrow),
+.about-page__card--future > p:not(.eyebrow) {
+  font-size: clamp(10px, 1.2vw + 4px, 16px);
+}
+
+.about-page p:not(.eyebrow) {
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+
+  .about-page__story-text {
+    line-height: 2.1;
+    overflow-wrap: break-word;
+  }
+
+  .about-page__story-text.is-collapsed {
+    max-height: 29.4em;
+    overflow: hidden;
+  }
+
+  .about-page__story-toggle {
+    margin-top: 12px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #39728f;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .about-page__story-toggle[hidden] {
+    display: none;
+  }
+
+  .about-page__story-toggle:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .about-page__story-toggle:focus-visible {
+    outline: 2px solid #39728f;
+    outline-offset: 4px;
+  }
+
   .about-page {
     position: relative;
     overflow: hidden;
@@ -183,7 +238,7 @@ import { getPublicUrl } from "../data/links";
   }
 
   .about-page__lead {
-    max-width: 34rem;
+    max-width: none;
     margin: 0;
     color: var(--color-text-muted);
     font-size: clamp(15px, 1.5vw, 18px);
@@ -357,12 +412,10 @@ import { getPublicUrl } from "../data/links";
     font-size: clamp(23px, 2.7vw, 32px);
   }
 
-  .about-page__card > p:not(.eyebrow),
-  .about-page__softbox > p:not(.eyebrow) {
-    margin: 0;
-    color: var(--color-text-muted);
-    line-height: 2.1;
+  .about-page__card--story > p:not(.eyebrow) {
+    font-size: clamp(14px, 1.2vw, 16px);
     white-space: pre-line;
+    overflow-wrap: break-word;
   }
 
   .about-page__meta {
@@ -398,7 +451,7 @@ import { getPublicUrl } from "../data/links";
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.76);
     color: #5485a1;
-    font-size: 13px;
+    font-size: clamp(14px, 1.3vw, 18px);
   }
 
   .about-page__tags {
@@ -510,3 +563,36 @@ import { getPublicUrl } from "../data/links";
     }
   }
 </style>
+
+<script>
+  const story = document.getElementById("about-story");
+  const toggle = document.querySelector<HTMLButtonElement>(".about-page__story-toggle");
+
+  if (story && toggle) {
+    const update = () => {
+      const lineHeight = parseFloat(getComputedStyle(story).lineHeight);
+      const overflow = story.scrollHeight > lineHeight * 14 + 1;
+
+      toggle.hidden = !overflow;
+
+      if (!overflow) {
+        story.classList.remove("is-collapsed");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.textContent = "もっと見る";
+      } else if (toggle.getAttribute("aria-expanded") !== "true") {
+        story.classList.add("is-collapsed");
+      }
+    };
+
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      story.classList.toggle("is-collapsed", expanded);
+      toggle.setAttribute("aria-expanded", String(!expanded));
+      toggle.textContent = expanded ? "もっと見る" : "閉じる";
+    });
+
+    window.addEventListener("resize", update);
+    document.fonts.ready.then(update);
+    update();
+  }
+</script>

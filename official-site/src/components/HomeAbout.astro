@@ -89,13 +89,14 @@ import { activityGenres } from "../data/profile";
     padding-bottom: 18px;
   }
 
-  .home-about__detail > p {
-    max-width: 47ch;
-    color: #698da2;
-    font-size: 16.5px;
-    line-height: 2.3;
-    white-space: pre-line;
-  }
+.home-about__detail > p {
+  max-width: none;
+  color: #698da2;
+  font-size: clamp(16.5px, 1.8vw, 20px);
+  line-height: 2;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
 
   .home-about__turn-mark {
     position: absolute;
@@ -176,7 +177,7 @@ import { activityGenres } from "../data/profile";
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.9);
     color: #317da4;
-    font-size: 13px;
+    font-size: clamp(12px, 1.2vw, 14px);
     font-weight: 800;
     text-decoration: none;
     box-shadow: 0 7px 20px rgba(100, 156, 192, 0.09);

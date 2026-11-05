@@ -20,7 +20,7 @@
   --shadow-hover: 0 25px 50px rgba(105, 166, 198, .15);
   --page-gutter: clamp(18px, 5vw, 72px);
   --container-width: 1150px;
-  --site-font: "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "UD デジタル 教科書体 N-R", "UD Digi Kyokasho N-R", "UD デジタル 教科書体 NK-R", "UD Digi Kyokasho NK-R", Meiryo, sans-serif;
+  --site-font: "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "ヒラギノ明朝 ProN", "Noto Serif CJK JP", "Noto Serif JP", "MS PMincho", serif;
 }
 
 *,
@@ -243,7 +243,7 @@ summary:focus-visible {
   border: 1px solid rgba(179, 214, 233, .8);
   border-radius: 999px;
   font-weight: 800;
-  font-size: 12px;
+  font-size: clamp(12px, 1.2vw, 16px);
   transition: transform .25s, box-shadow .25s;
 }
 
@@ -267,7 +267,7 @@ summary:focus-visible {
 .text-arrow {
   display: inline-block;
   color: #4689ac;
-  font-size: 12px;
+  font-size: clamp(12px, 1.2vw, 14px);
   font-weight: 800;
   transition: transform .25s;
 }
@@ -324,10 +324,12 @@ summary:focus-visible {
 }
 
 .page-intro__description {
-  max-width: 44ch;
-  color: #678ca1;
-  font-size: clamp(16px, 1.7vw, 18px);
-  line-height: 2.1;
+    max-width: 100%;
+    color: #678ca1;
+    font-size: clamp(18px, 2vw, 21px);
+    line-height: 1.9;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
 }
 
 .page-intro__decor {
@@ -395,7 +397,7 @@ summary:focus-visible {
 
 .home-hero h1 {
   margin: 0 0 20px;
-  font-size: clamp(27px, 3.85vw, 55px);
+  font-size: clamp(20px, 3.85vw, 40px);
   line-height: 1.48;
   font-weight: 800;
   color: #365e74;
@@ -407,17 +409,19 @@ summary:focus-visible {
 }
 
 .home-hero__name {
-  margin-bottom: 7px;
+  margin-bottom: 8px;
   color: #5997ba;
-  font-size: 21px;
+  font-size: clamp(26px, 4vw, 48px);
   font-weight: 800;
 }
 
 .home-hero__lead {
-  max-width: 35ch;
+  max-width: none;
   color: #7394a7;
-  font-size: 16px;
-  line-height: 2.2;
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 2;
+  white-space: pre-line;
+  overflow-wrap: break-word;
 }
 
 .home-hero__actions {

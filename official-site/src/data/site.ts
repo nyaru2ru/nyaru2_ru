@@ -1,8 +1,8 @@
 export const site = {
-    name: "名前入れる",
-    fullName: "ここにフルネームを入れる",
+    name: "にゃるる",
+    fullName: "瑠羽 にゃるる",
     get description() {
-        return `${this.fullName}の活動や配信予定、動画、作品、お知らせなどをまとめたサイトです。`;
+        return `${this.fullName}公式HP`;
     },
     allowSearchIndexing: false,
 };
