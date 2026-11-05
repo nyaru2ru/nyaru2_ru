@@ -21,6 +21,11 @@
   --page-gutter: clamp(18px, 5vw, 72px);
   --container-width: 1150px;
   --site-font: "Yu Mincho", "游明朝", "Hiragino Mincho ProN", "ヒラギノ明朝 ProN", "Noto Serif CJK JP", "Noto Serif JP", "MS PMincho", serif;
+  /* 共通：文字サイズ */
+  --font-hero: clamp(22px, calc(18px + 1vw), 32px);
+  --font-heading: clamp(16px, calc(14px + 0.55vw), 22px);
+  --font-link: clamp(12px, calc(11px + 0.28vw), 15px);
+  --font-body: clamp(12px, calc(11px + 0.22vw), 14px);
 }
 
 *,
@@ -39,14 +44,13 @@ body {
   width: 100%;
   font-family: var(--site-font);
   color: var(--color-text);
-  font-size: 14px;
+  font-size: var(--font-body);
   line-height: 1.9;
   background: #f5fbff;
 }
 
 body::before {
   content: "";
-
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -164,7 +168,7 @@ summary:focus-visible {
   padding: 7px 13px;
   border-radius: 999px;
   color: #527a93;
-  font-size: 13.5px;
+  font-size: var(--font-link);
   font-weight: 750;
   transition: background .2s, transform .2s;
 }
@@ -193,7 +197,7 @@ summary:focus-visible {
   align-items: center;
   justify-content: space-between;
   color: #7c9aab;
-  font-size: 12px;
+  font-size: var(--font-body);
 }
 
 .site-footer__inner a {
@@ -228,7 +232,7 @@ summary:focus-visible {
 
 .eyebrow {
   margin: 0 0 9px;
-  font-size: 12.5px;
+  font-size: var(--font-link);
   letter-spacing: .19em;
   font-weight: 800;
   color: #5b9abc;
@@ -244,7 +248,7 @@ summary:focus-visible {
   border: 1px solid rgba(179, 214, 233, .8);
   border-radius: 999px;
   font-weight: 800;
-  font-size: clamp(11px, 1.2vw, 15px);
+  font-size: var(--font-link);
   transition: transform .25s, box-shadow .25s;
 }
 
@@ -268,7 +272,7 @@ summary:focus-visible {
 .text-arrow {
   display: inline-block;
   color: #4689ac;
-  font-size: clamp(11px, 1.2vw, 14px);
+  font-size: var(--font-link);
   font-weight: 800;
   transition: transform .25s;
 }
@@ -315,19 +319,21 @@ summary:focus-visible {
   padding: 16px clamp(10px, 3vw, 32px) 32px 0;
 }
 
+/* 各ページ：見出し */
 .page-intro h1 {
   margin: 0 0 14px;
   color: #315d78;
-  font-size: clamp(24px, 3.5vw, 46px);
+  font-size: var(--font-heading);
   font-weight: 800;
   letter-spacing: .025em;
   text-shadow: 0 3px 0 #fff, 0 13px 31px rgba(93, 165, 205, .18);
 }
 
+/* 各ページ：紹介文 */
 .page-intro__description {
     max-width: 100%;
     color: #678ca1;
-    font-size: clamp(14px, 2vw, 20px);
+  font-size: var(--font-body);
     line-height: 1.9;
     white-space: pre-line;
     overflow-wrap: anywhere;
@@ -396,9 +402,10 @@ summary:focus-visible {
   padding-block: 12px;
 }
 
+/* HOME：キャッチコピー */
 .home-hero h1 {
   margin: 0 0 20px;
-  font-size: clamp(20px, 3.85vw, 40px);
+  font-size: var(--font-hero);
   line-height: 1.48;
   font-weight: 800;
   color: #365e74;
@@ -409,17 +416,18 @@ summary:focus-visible {
   color: #438ab1;
 }
 
+/* HOME：名前 */
 .home-hero__name {
   margin-bottom: 8px;
   color: #5997ba;
-  font-size: clamp(14px, 4vw, 22px);
+  font-size: var(--font-hero);
   font-weight: 800;
 }
 
 .home-hero__lead {
   max-width: none;
   color: #7394a7;
-  font-size: clamp(12px, 1.8vw, 15px);
+  font-size: var(--font-body);
   line-height: 2;
   white-space: pre-line;
   overflow-wrap: break-word;
@@ -438,7 +446,7 @@ summary:focus-visible {
   gap: 8px 15px;
   margin-top: 19px;
   color: #4f8dac;
-  font-size: 12px;
+  font-size: var(--font-link);
   font-weight: 750;
 }
 
@@ -598,7 +606,7 @@ summary:focus-visible {
   margin: 0;
   max-width: 13ch;
   color: #7196ab;
-  font-size: 12px;
+  font-size: var(--font-body);
   text-align: center;
   line-height: 2.1;
 }
@@ -654,14 +662,14 @@ summary:focus-visible {
 }
 
 .home-about h2 {
-  font-size: clamp(21px, 2.4vw, 31px);
+  font-size: var(--font-heading);
   color: #376783;
 }
 
 .home-about__copy>p:not(.eyebrow) {
   max-width: 47ch;
   color: #698da2;
-  font-size: 15px;
+  font-size: var(--font-body);
   line-height: 2.3;
   white-space: pre-line;
 }
@@ -681,7 +689,7 @@ summary:focus-visible {
   border-radius: 999px;
   background: #e5f4fe;
   color: #5787a4;
-  font-size: 12px;
+  font-size: var(--font-link);
   border: 1px solid white;
 }
 
@@ -772,7 +780,7 @@ summary:focus-visible {
 .home-letter h2,
 .home-wander h2,
 .home-goodbye h2 {
-  font-size: clamp(21px, 2.4vw, 31px);
+  font-size: var(--font-heading);
   color: #356682;
 }
 
@@ -783,7 +791,7 @@ summary:focus-visible {
 
 .home-letter__heading p:not(.eyebrow) {
   color: #7996a8;
-  font-size: 15px;
+  font-size: var(--font-body);
 }
 
 .home-letter__entries {
@@ -812,21 +820,21 @@ summary:focus-visible {
 
 .home-letter__entry time {
   color: #6299b9;
-  font-size: 12px;
+  font-size: var(--font-body);
   font-weight: 800;
 }
 
 .home-letter__entry h3 {
   margin: 6px 0;
   color: #376681;
-  font-size: 17px;
+  font-size: var(--font-heading);
 }
 
 .home-letter__entry p,
 .home-letter__empty {
   margin: 0;
   color: #718e9f;
-  font-size: 14.5px;
+  font-size: var(--font-body);
 }
 
 .home-wander {
@@ -899,7 +907,7 @@ summary:focus-visible {
 .home-wander__path strong {
   margin-top: 8px;
   color: #39769a;
-  font-size: 19px;
+  font-size: var(--font-heading);
 }
 
 .home-wander__path small {
@@ -907,7 +915,7 @@ summary:focus-visible {
   max-width: 18ch;
   color: #7998a9;
   line-height: 1.6;
-  font-size: 11px;
+  font-size: var(--font-body);
 }
 
 .home-goodbye {
@@ -969,7 +977,7 @@ summary:focus-visible {
 .home-goodbye__inner p:not(.eyebrow) {
   margin: 0;
   color: #7394a7;
-  font-size: 15px;
+  font-size: var(--font-body);
 }
 
 .about-world {
@@ -988,7 +996,7 @@ summary:focus-visible {
 
 .about-world__intro h1 {
   margin: 0 0 10px;
-  font-size: clamp(27px, 4.25vw, 50px);
+  font-size: var(--font-heading);
   color: #356781;
 }
 
@@ -998,7 +1006,7 @@ summary:focus-visible {
 
 .about-world__intro p:not(.eyebrow) {
   color: #718da1;
-  font-size: 16.5px;
+  font-size: var(--font-body);
 }
 
 .about-world__orbit {
@@ -1086,13 +1094,13 @@ summary:focus-visible {
 
 .about-world__profile h2 {
   color: #427d9f;
-  font-size: clamp(20px, 2.45vw, 32px);
+  font-size: var(--font-heading);
 }
 
 .about-world__profile p:not(.eyebrow),
 .about-world__chapters p:not(.eyebrow) {
   color: #66889e;
-  font-size: 16.5px;
+  font-size: var(--font-body);
   white-space: pre-line;
   line-height: 2.2;
 }
@@ -1109,7 +1117,7 @@ summary:focus-visible {
 .about-world__chapters h2,
 .about-world__details h2 {
   color: #366f8d;
-  font-size: 18px;
+  font-size: var(--font-heading);
 }
 
 .about-world__details {
@@ -1199,13 +1207,13 @@ summary:focus-visible {
 .social-stream__line h2 {
   margin: 0;
   color: #367293;
-  font-size: clamp(18px, 2.45vw, 27px);
+  font-size: var(--font-heading);
 }
 
 .social-stream__line p {
   margin: 5px 0 0;
   color: #7392a5;
-  font-size: 16.5px;
+  font-size: var(--font-body);
 }
 
 .social-stream__line>a,
@@ -1217,7 +1225,7 @@ summary:focus-visible {
   background: #fff;
   color: #4c89a9;
   font-weight: 800;
-  font-size: 12px;
+  font-size: var(--font-link);
 }
 
 .social-stream__soon {
@@ -1254,7 +1262,7 @@ summary:focus-visible {
 }
 
 .activity-diary__heading h2 {
-  font-size: clamp(18px, 2.45vw, 27px);
+  font-size: var(--font-heading);
   color: #417796;
 }
 
@@ -1282,13 +1290,13 @@ summary:focus-visible {
 }
 
 .activity-diary__events time {
-  font-size: 12px;
+  font-size: var(--font-body);
   font-weight: 800;
   color: #7badc9;
 }
 
 .activity-diary__events h3 {
-  font-size: 15px;
+  font-size: var(--font-heading);
   color: #39718f;
   margin: 3px 0;
 }
@@ -1332,7 +1340,7 @@ summary:focus-visible {
 
 .contents-island>header h2 {
   margin: 0 0 23px;
-  font-size: clamp(20px, 2.45vw, 28px);
+  font-size: var(--font-heading);
   color: #407794;
 }
 
@@ -1378,19 +1386,19 @@ summary:focus-visible {
 .contents-work p,
 .contents-shops p {
   color: #7796a8;
-  font-size: 12px;
+  font-size: var(--font-body);
 }
 
 .contents-work a,
 .contents-shops a {
   color: #4183a7;
-  font-size: 12px;
+  font-size: var(--font-link);
   font-weight: 800;
 }
 
 .contents-shops span {
   color: #91a6b3;
-  font-size: 12px;
+  font-size: var(--font-body);
 }
 
 .guideline-notes {
@@ -1426,7 +1434,7 @@ summary:focus-visible {
 .guideline-note h2 {
   margin: 0 0 15px;
   color: #3b7796;
-  font-size: clamp(18px, 2.3vw, 25px);
+  font-size: var(--font-heading);
 }
 
 .guideline-note p:not(.eyebrow) {
@@ -1475,7 +1483,7 @@ summary:focus-visible {
 .contact-letter h2 {
   margin: 0 0 15px;
   color: #36728e;
-  font-size: clamp(20px, 2vw, 24px);
+  font-size: var(--font-heading);
   line-height: 1.55;
   letter-spacing: .01em;
   text-wrap: balance;
@@ -1487,7 +1495,7 @@ summary:focus-visible {
 
 .contact-letter__soon {
   color: #90a7b5;
-  font-size: 13px;
+  font-size: var(--font-body);
 }
 
 .contact-notes {
@@ -1520,7 +1528,7 @@ summary:focus-visible {
 }
 
 .fanart-gallery__heading h2 {
-  font-size: clamp(21px, 2.45vw, 30px);
+  font-size: var(--font-heading);
   margin: 0;
   color: #367493;
 }
@@ -1564,12 +1572,12 @@ summary:focus-visible {
   display: grid;
   gap: 2px;
   padding: 10px 8px 5px;
-  font-size: 12px;
+  font-size: var(--font-body);
   color: #7392a6;
 }
 
 .fanart-item figcaption strong {
-  font-size: 12px;
+  font-size: var(--font-body);
   color: #437895;
 }
 
@@ -1633,7 +1641,7 @@ summary:focus-visible {
 .weekly__period-label {
   margin: 0 0 5px;
   color: #6a9dbb;
-  font-size: 10px;
+  font-size: var(--font-link);
   font-weight: 800;
   letter-spacing: .16em;
 }
@@ -1641,13 +1649,13 @@ summary:focus-visible {
 .weekly #weekly-title {
   margin: 0 0 6px;
   color: #367394;
-  font-size: clamp(21px, 2.55vw, 32px);
+  font-size: var(--font-heading);
 }
 
 .weekly__description {
   color: #7795a8;
   margin: 0;
-  font-size: 16px;
+  font-size: var(--font-body);
 }
 
 .weekly__decor {
@@ -1709,7 +1717,7 @@ summary:focus-visible {
 .weekly__period {
   margin: 0;
   color: #4482a1;
-  font-size: 13px;
+  font-size: var(--font-link);
   font-weight: 800;
 }
 
@@ -1726,7 +1734,7 @@ summary:focus-visible {
   border-radius: 999px;
   background: white;
   color: #43809f;
-  font-size: 14px;
+  font-size: var(--font-link);
   font-weight: 800;
 }
 
@@ -1776,7 +1784,7 @@ summary:focus-visible {
 }
 
 .weekly__date-weekday {
-  font-size: 10px;
+  font-size: var(--font-body);
   font-weight: 700;
 }
 
@@ -1809,7 +1817,7 @@ summary:focus-visible {
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 8px;
-  font-size: 12px;
+  font-size: var(--font-body);
 }
 
 .weekly__event+.weekly__event {
@@ -1823,13 +1831,13 @@ summary:focus-visible {
   background: #e3f4fe;
   color: #498bae;
   font-weight: 800;
-  font-size: 10px;
+  font-size: var(--font-link);
   white-space: nowrap;
 }
 
 .weekly__event-title {
   color: #3c7696;
-  font-size: 12px;
+  font-size: var(--font-body);
   font-weight: 800;
 }
 
@@ -1840,7 +1848,7 @@ summary:focus-visible {
 .weekly__event-detail,
 .weekly__no-event {
   color: #94aebc;
-  font-size: 11px;
+  font-size: var(--font-body);
 }
 
 .weekly__today-label {
@@ -1852,7 +1860,7 @@ summary:focus-visible {
 }
 
 .weekly__notice {
-  font-size: 12px;
+  font-size: var(--font-body);
   text-align: center;
   color: #8aa5b5;
   margin: 15px 0 0;
@@ -1908,7 +1916,7 @@ summary:focus-visible {
 .weekly__next-card h3,
 .weekly__links-card h3 {
   color: #427997;
-  font-size: clamp(19px, 2.2vw, 25px);
+  font-size: var(--font-heading);
   margin: 0 0 19px;
 }
 
@@ -1927,12 +1935,12 @@ summary:focus-visible {
 .weekly__upcoming-time {
   color: #5b94b5;
   font-weight: 800;
-  font-size: 12px;
+  font-size: var(--font-link);
 }
 
 .weekly__upcoming-title {
   color: #3f7796;
-  font-size: 15px;
+  font-size: var(--font-heading);
   font-weight: 800;
 }
 
@@ -1940,13 +1948,13 @@ summary:focus-visible {
 .weekly__upcoming-empty {
   margin: 0;
   color: #829eae;
-  font-size: 13px;
+  font-size: var(--font-body);
 }
 
 .weekly__next-note,
 .weekly__links-description {
   color: #87a1b0;
-  font-size: 12px;
+  font-size: var(--font-body);
   margin: 12px 0 0;
 }
 
@@ -1967,7 +1975,7 @@ summary:focus-visible {
   background: white;
   border: 1px solid #d2e8f4;
   color: #528aab;
-  font-size: 12px;
+  font-size: var(--font-link);
   font-weight: 800;
 }
 
@@ -1983,7 +1991,7 @@ summary:focus-visible {
 
 .weekly__footer a {
   color: #4b87a7;
-  font-size: 12px;
+  font-size: var(--font-link);
   font-weight: 800;
 }
 
@@ -1995,36 +2003,36 @@ summary:focus-visible {
 .contact-notes p:not(.eyebrow),
 .fanart-footnotes p:not(.eyebrow),
 .about-world__details>section>p:not(.eyebrow) {
-  font-size: 16.5px;
+  font-size: var(--font-body);
 }
 
 .contents-work p,
 .contents-shops p,
 .weekly__upcoming-description,
 .weekly__upcoming-empty {
-  font-size: 14.5px;
+  font-size: var(--font-body);
 }
 
 .about-page .about-page__hero .about-page__copy h1 {
-  font-size: clamp(27px, 3.85vw, 55px);
+  font-size: var(--font-heading);
   font-weight: 800;
 }
 
 .weekview .weekview__heading #weekview-title {
-  font-size: clamp(14px, 2.6vw, 25px);
+  font-size: var(--font-heading);
 }
 
 .about-page .about-page__hero .about-page__copy .about-page__lead {
-  font-size: clamp(17.5px, 1.7vw, 20.5px);
+  font-size: var(--font-body);
 }
 
 .about-page .about-page__profile .about-page__card h2,
 .about-page .about-page__meta .about-page__softbox h2 {
-  font-size: clamp(21px, 2.5vw, 30px);
+  font-size: var(--font-heading);
 }
 
 .weekview .weekview__description {
-  font-size: 16px;
+  font-size: var(--font-body);
 }
 
 @keyframes slow-float {
@@ -2101,7 +2109,7 @@ summary:focus-visible {
   .mobile-menu nav a {
     padding: 8px 13px;
     border-radius: 999px;
-    font-size: 15px;
+  font-size: var(--font-link);
     font-weight: 750;
     color: #4b7a99;
   }
@@ -2140,11 +2148,11 @@ summary:focus-visible {
   }
 
   .home-hero h1 {
-    font-size: clamp(25px, 6.1vw, 38px);
+  font-size: var(--font-heading);
   }
 
   .about-page .about-page__hero .about-page__copy h1 {
-    font-size: clamp(25px, 6.1vw, 38px);
+  font-size: var(--font-heading);
   }
 
   .home-visual__frame {
@@ -2269,11 +2277,11 @@ summary:focus-visible {
   }
 
   .home-hero h1 {
-    font-size: clamp(24px, 7vw, 31px);
+  font-size: var(--font-heading);
   }
 
   .about-page .about-page__hero .about-page__copy h1 {
-    font-size: clamp(24px, 7vw, 31px);
+  font-size: var(--font-heading);
   }
 
   .home-hero__actions {
@@ -2290,11 +2298,11 @@ summary:focus-visible {
   }
 
   .home-visual__deco--one {
-    font-size: 30px;
+  font-size: 30px;
   }
 
   .home-visual__deco--two {
-    font-size: 24px;
+  font-size: 24px;
   }
 
   .home-wander__paths {
@@ -2308,11 +2316,11 @@ summary:focus-visible {
   }
 
   .home-wander__path strong {
-    font-size: 16px;
+  font-size: var(--font-heading);
   }
 
   .home-wander__path small {
-    font-size: 10px;
+  font-size: var(--font-body);
   }
 
   .weekly__board {
@@ -2331,11 +2339,11 @@ summary:focus-visible {
   }
 
   .weekly__date-number {
-    font-size: 17px;
+  font-size: 17px;
   }
 
   .weekly__event-title {
-    font-size: 11px;
+  font-size: var(--font-body);
   }
 
   .page-intro {
@@ -2343,13 +2351,13 @@ summary:focus-visible {
   }
 
   .page-intro h1 {
-    font-size: 24px;
+  font-size: var(--font-heading);
   }
 
   .page-intro__decor span:nth-child(1) {
     right: 2%;
     top: -15px;
-    font-size: 35px;
+  font-size: 35px;
   }
 
   .about-world__intro {
@@ -2362,7 +2370,7 @@ summary:focus-visible {
   }
 
   .about-world__orbit span:nth-child(1) {
-    font-size: 31px;
+  font-size: 31px;
   }
 
   .social-stream__line {
@@ -2372,7 +2380,7 @@ summary:focus-visible {
   }
 
   .social-stream__symbol {
-    font-size: 32px;
+  font-size: 32px;
   }
 
   .guideline-note {
@@ -2382,7 +2390,7 @@ summary:focus-visible {
   }
 
   .guideline-note__mark {
-    font-size: 35px;
+  font-size: 35px;
   }
 
   .contents-island {
@@ -2410,7 +2418,7 @@ summary:focus-visible {
   }
 
   .fanart-item figcaption {
-    font-size: 11px;
+  font-size: var(--font-body);
   }
 }
 
