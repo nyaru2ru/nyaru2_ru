@@ -1,11 +1,12 @@
 
 export const pageText = {
     home: {
-        heroFirst: "キミを癒したい",
-        heroAccent: "にゃんこ天使",
+        heroFirst: "キミを癒したいにゃんこ天使",
+        heroAccent: "",
         heroLast: "",
         introduction: "みんなに癒しをお届けするのが大好きなにゃんこ天使🪽\n毎日18時からTwitchでFPSや歌枠の配信を\nYouTubeでは不定期的に読み聞かせ、歌ってみた、ラジオを公開しています",
         mainVisualImage: "/images/main-visual.png" as string | null,
+        heroImage: "/images/home-logo.png" as string | null,
         mainVisualAlt: "メインビジュアル",
         mainVisualPlaceholder: "ここにメインビジュアルを入れる",
         about: "ここに自己紹介文を入れる。",
@@ -17,7 +18,7 @@ export const pageText = {
     about: {
         introduction: "ここに紹介文を入れる",
         profile: "ここに自己紹介文を入れる",
-        history: "2025年5月X日\nTwitch初配信\n2025年11月22日\nLive2Dデビュー配信\n2026年2月22日\nFPS主催大会「第一回にゃるる杯Apex編 開催」\n2026年5月2日\nFPS主催大会「第二回にゃるる杯OW編 開催」\n2026年8月22日\nFPS主催大会「第三回にゃるる杯Apex編 開催」",
+        history: "2025年4月27日\nTwitch初配信\n2025年11月22日\nLive2Dデビュー配信\n2026年2月22日\nFPS主催大会「第一回にゃるる杯Apex編 開催」\n2026年5月2日\nFPS主催大会「第二回にゃるる杯OW編 開催」\n2026年8月22日\nFPS主催大会「第三回にゃるる杯Apex編 開催」",
         future: "目標：Twitchパートナーになること！\n（登録者1500人、平均同接75人が条件なので応援してくれると嬉しいです！）",
     },
     social: {
