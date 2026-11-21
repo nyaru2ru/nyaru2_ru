@@ -1,0 +1,367 @@
+---
+import { site } from "../data/site";
+import { pageText } from "../data/pages";
+import { activityGenres } from "../data/profile";
+import VideoEmbed from "./VideoEmbed.astro";
+import socialContent from "../content/social.json";
+
+type HomeVideo = { title: string; videoId: string; published?: boolean };
+const existingVideos: HomeVideo[] = [
+  { title: "生誕祭2026", videoId: "TFEHgl8Z5ks" },
+  { title: "「Aim Routine: JEENZ」やってみた", videoId: "R6RntvVC-W4" },
+];
+
+const homeVideos = (
+  socialContent.homeVideos.length > 0
+    ? (socialContent.homeVideos as HomeVideo[]).filter(
+        (video) => video.published !== false,
+      )
+    : existingVideos
+)
+  .slice(0, 2)
+  .map((video) => ({
+    ...video,
+    isValid: /^[a-zA-Z0-9_-]{11}$/.test(video.videoId),
+    youtubeUrl: /^[a-zA-Z0-9_-]{11}$/.test(video.videoId)
+      ? `https://www.youtube.com/watch?v=${video.videoId}`
+      : null,
+  }));
+---
+
+<section class="home-about" id="about" aria-labelledby="home-about-title">
+  <div class="container home-about__inner">
+    <div class="home-about__copy">
+      <div class="home-about__lead">
+        <p class="eyebrow">ABOUT ME</p>
+        <h2 id="home-about-title">わたしのこと</h2>
+      </div>
+
+      <div class="home-about__detail">
+        <p>{pageText.home.about}</p>
+
+        {activityGenres.length > 0 && (
+          <ul class="home-about__genres" aria-label="活動ジャンル">
+            {activityGenres.slice(0, 4).map((genre) => (
+              <li>{genre}</li>
+            ))}
+          </ul>
+        )}
+        <span class="home-about__turn-mark" aria-hidden="true">
+          ♡
+        </span>
+      </div>
+    </div>
+
+    <div class="home-about__side">
+      <div class="home-about__visual" aria-label="プロフィールイメージ">
+        <div class="home-about__visual-glow" aria-hidden="true"></div>
+        <div class="home-about__visual-frame">
+          {pageText.home.mainVisualImage ? (
+            <img
+              class="home-about__image"
+              src={pageText.home.mainVisualImage}
+              alt={pageText.home.mainVisualAlt || `${site.name}のイメージ`}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <div class="home-about__visual-placeholder" aria-hidden="true">
+              ♡
+            </div>
+          )}
+        </div>
+        <span
+          class="home-about__visual-deco home-about__visual-deco--one"
+          aria-hidden="true"
+        >
+          ☆
+        </span>
+        <span
+          class="home-about__visual-deco home-about__visual-deco--two"
+          aria-hidden="true"
+        >
+          ○
+        </span>
+        <span
+          class="home-about__visual-deco home-about__visual-deco--three"
+          aria-hidden="true"
+        >
+          ♡
+        </span>
+      </div>
+
+      <div class="home-about__action">
+        <a href="/about/">
+          プロフィールを詳しく見る <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="home-about__videos" aria-label="おすすめ動画">
+      {homeVideos.map((video) => (
+        <article class="home-about__video">
+          <h3 class="home-about__video-title">
+            {video.youtubeUrl ? (
+              <a
+                href={video.youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                referrerpolicy="no-referrer"
+              >
+                {video.title}
+                <span aria-hidden="true"> </span>
+              </a>
+            ) : (
+              video.title
+            )}
+          </h3>
+          {video.isValid ? (
+            <VideoEmbed videoId={video.videoId} title={video.title} />
+          ) : (
+            <div class="home-about__video-placeholder">動画は準備中です</div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-about__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+    grid-template-areas:
+      "copy side"
+      "videos videos";
+    align-items: center;
+    column-gap: clamp(24px, 5vw, 78px);
+    row-gap: clamp(24px, 3vw, 38px);
+  }
+
+  .home-about__copy {
+    grid-area: copy;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0;
+    gap: clamp(12px, 2vw, 20px);
+  }
+
+  .home-about__lead,
+  .home-about__detail {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-about__detail {
+    padding-bottom: 0;
+  }
+
+  .home-about__detail > p {
+    max-width: none;
+    margin: 0;
+    color: #698da2;
+    font-size: clamp(14px, 1.8vw, 18px);
+    line-height: 2;
+    white-space: pre-line;
+    overflow-wrap: break-word;
+  }
+
+  .home-about__videos {
+    grid-area: videos;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(16px, 2.4vw, 28px);
+    min-width: 0;
+  }
+
+  .home-about__video {
+    min-width: 0;
+  }
+
+  .home-about__video-title {
+    margin: 0 0 8px;
+    color: #317da4;
+    font-size: clamp(14px, 1.25vw, 16px);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .home-about__video-title a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .home-about__video-title a:hover {
+    color: #195d84;
+  }
+
+  .home-about__video-title a:focus-visible {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .home-about__video-placeholder {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    background: #eaf7fd;
+    color: #698da2;
+    font-size: 13px;
+  }
+
+  .home-about__turn-mark {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    color: #81b8d5;
+    opacity: 0.48;
+    font-size: 28px;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    transform: rotate(-14deg);
+  }
+
+  .home-about__side {
+    grid-area: side;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    align-self: center;
+  }
+
+  .home-about__visual {
+    position: relative;
+    min-width: 0;
+  }
+
+  .home-about__visual-frame {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-about__visual-frame .home-about__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .home-about__visual-deco {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .home-about__visual-deco--one {
+    top: -12px;
+    right: 2%;
+    font-size: clamp(23px, 3vw, 40px);
+    transform: rotate(12deg);
+  }
+
+  .home-about__visual-deco--two {
+    top: 34%;
+    right: -9px;
+    font-size: 16px;
+    opacity: 0.5;
+  }
+
+  .home-about__visual-deco--three {
+    left: 1%;
+    bottom: 8%;
+    font-size: clamp(20px, 2.5vw, 32px);
+    opacity: 0.48;
+    transform: rotate(-10deg);
+  }
+
+  .home-about__action {
+    align-self: flex-end;
+    position: relative;
+    z-index: 2;
+  }
+
+  .home-about__action a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 1px solid #baddeb;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #317da4;
+    font-size: clamp(12px, 1.2vw, 14px);
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 7px 20px rgba(100, 156, 192, 0.09);
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .home-about__action a:hover {
+    background: #eaf7fd;
+    transform: translateY(-2px);
+  }
+
+  .home-about__action a:focus-visible {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 768px) {
+    .home-about__inner {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "side"
+        "copy"
+        "videos";
+      row-gap: 24px;
+    }
+
+    .home-about__side {
+      width: min(100%, 440px);
+      justify-self: center;
+      align-self: start;
+    }
+
+    .home-about__copy {
+      gap: 12px;
+    }
+
+    .home-about__detail {
+      padding-bottom: 0;
+    }
+
+    .home-about__turn-mark,
+    .home-about__visual-deco--two {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .home-about__videos {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-about__action a {
+      transition: none;
+    }
+
+    .home-about__action a:hover {
+      transform: none;
+    }
+  }
+</style>

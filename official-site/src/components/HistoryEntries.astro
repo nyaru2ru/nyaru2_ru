@@ -1,0 +1,201 @@
+---
+import type { HistoryEntry } from "../data/history";
+import { formatJapaneseDate } from "../lib/formatJapaneseDate";
+
+interface Props {
+  entries: readonly HistoryEntry[];
+}
+
+const { entries } = Astro.props;
+
+function dateNumber(value: string): number {
+  const parts = value.match(/\d+/g)?.slice(0, 3).map(Number) ?? [];
+  if (parts.length === 0) return -1;
+
+  const [year, month = 1, day = 1] = parts;
+  return year * 10000 + month * 100 + day;
+}
+
+const sortedEntries = [...entries].sort(
+  (a, b) => dateNumber(b.date) - dateNumber(a.date),
+);
+
+const initial = sortedEntries.slice(0, 6);
+const additional = sortedEntries.slice(6);
+const additionalGroups: HistoryEntry[][] = [];
+
+for (let index = 0; index < additional.length; index += 6) {
+  additionalGroups.push(additional.slice(index, index + 6));
+}
+---
+
+<div class="history-entries">
+  {sortedEntries.length === 0 ? (
+    <p class="history-entries__empty">活動の記録は準備中です。</p>
+  ) : (
+    <>
+      <ol class="history-entries__list">
+        {initial.map((item) => (
+          <li class="history-entries__item">
+            {item.date && (
+              <span class="history-entries__date">
+                {formatJapaneseDate(item.date)}
+              </span>
+            )}
+            <span class="history-entries__title">{item.title}</span>
+          </li>
+        ))}
+      </ol>
+
+      {additional.length > 0 && (
+        <details class="history-entries__more">
+          <summary>
+            <span class="history-entries__closed">
+              もっと見る（残り{additional.length}件）
+            </span>
+            <span class="history-entries__opened">閉じる</span>
+          </summary>
+
+          {additionalGroups.map((group, groupIndex) => (
+            <ol
+              class="history-entries__list history-entries__list--additional"
+              start={7 + groupIndex * 6}
+            >
+              {group.map((item) => (
+                <li class="history-entries__item">
+                  {item.date && (
+                    <span class="history-entries__date">
+                      {formatJapaneseDate(item.date)}
+                    </span>
+                  )}
+                  <span class="history-entries__title">{item.title}</span>
+                </li>
+              ))}
+            </ol>
+          ))}
+        </details>
+      )}
+    </>
+  )}
+</div>
+
+<style>
+  .history-entries__list {
+    display: grid;
+    gap: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .history-entries__item {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+    padding: 12px 14px;
+    border-left: 3px solid #a9d4e9;
+    border-radius: 0 14px 14px 0;
+    background: rgba(255, 255, 255, 0.62);
+  }
+
+  .history-entries__date {
+    color: #4b87a5;
+    font-size: 13px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .history-entries__title {
+    color: #355f77;
+    font-size: clamp(12px, 1.25vw, 14px);
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+  }
+
+  .history-entries__more {
+    margin-top: 14px;
+  }
+
+  .history-entries__more summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 9px 17px;
+    border: 1px solid #baddeb;
+    border-radius: 999px;
+    background: #fff;
+    color: #39728f;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .history-entries__more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .history-entries__opened {
+    display: none;
+  }
+
+  .history-entries__more[open] .history-entries__opened {
+    display: inline;
+  }
+
+  .history-entries__more[open] .history-entries__closed {
+    display: none;
+  }
+
+  .history-entries__list--additional {
+    margin-top: 14px;
+  }
+
+  .history-entries__more summary:focus-visible {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+  }
+
+  .history-entries__empty {
+    color: #68899b;
+  }
+
+  @media (min-width: 761px) {
+    .history-entries__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+    }
+
+    .history-entries__item:nth-child(1) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .history-entries__item:nth-child(2) {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .history-entries__item:nth-child(3) {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    .history-entries__item:nth-child(4) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .history-entries__item:nth-child(5) {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    .history-entries__item:nth-child(6) {
+      grid-column: 2;
+      grid-row: 3;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .history-entries__list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
