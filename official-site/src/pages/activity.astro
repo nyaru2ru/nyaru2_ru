@@ -1,0 +1,333 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatJapaneseDate } from "../lib/formatJapaneseDate";
+import PageHeader from "../components/PageHeader.astro";
+import { activityItems } from "../data/activity";
+import { pageText } from "../data/pages";
+import { getSiteOrPublicUrl } from "../data/links";
+
+const definitions = [
+  {
+    category: "news",
+    label: "NEWS",
+    title: "お知らせ",
+    limit: 3,
+    emptyText: "特別な企画や開催のお知らせを、ここに掲載します。",
+  },
+  {
+    category: "achievement",
+    label: "ACTIVITY",
+    title: "活動実績",
+    limit: Infinity,
+    emptyText: "作品の公開や、これまでの活動の記録を掲載します。",
+  },
+  {
+    category: "event",
+    label: "EVENT",
+    title: "大会・イベント",
+    limit: 6,
+    emptyText: "開催・参加した大会やイベントの記録を掲載します。",
+  },
+] as const;
+
+const chapters = definitions.map((definition) => ({
+  ...definition,
+  items: activityItems
+    .filter((item) => item.category === definition.category)
+    .sort((a, b) => b.date.localeCompare(a.date)),
+}));
+---
+
+<BaseLayout title="Activity">
+  <section class="section activity-page">
+    <div class="container">
+      <PageHeader
+        label="ACTIVITY"
+        title="これまでと、これから"
+        description={pageText.activity.introduction}
+      />
+
+      <div class="activity-diary">
+        {chapters.map((chapter, index) => {
+          const visible = chapter.items.slice(0, chapter.limit);
+          const extra =
+            chapter.category === "event"
+              ? chapter.items.slice(chapter.limit)
+              : [];
+
+          return (
+            <section
+              class:list={[
+                "activity-diary__chapter",
+                {
+                  "activity-diary__chapter--news": chapter.category === "news",
+                },
+              ]}
+              aria-labelledby={`activity-heading-${chapter.category}`}
+            >
+              <div class="activity-diary__heading">
+                <span aria-hidden="true">{index % 2 === 0 ? "☆" : "♡"}</span>
+                <p class="eyebrow">{chapter.label}</p>
+                <h2 id={`activity-heading-${chapter.category}`}>
+                  {chapter.title}
+                </h2>
+              </div>
+
+              {visible.length > 0 ? (
+                <ol class="activity-diary__events">
+                  {visible.map((item) => {
+                    const href = getSiteOrPublicUrl(item.url ?? null);
+                    const external = href?.startsWith("https://") ?? false;
+
+                    return (
+                      <li>
+                        <time datetime={item.date}>
+                          {formatJapaneseDate(item.date)}
+                        </time>
+                        <h3>
+                          {href ? (
+                            <a
+                              href={href}
+                              target={external ? "_blank" : undefined}
+                              rel={external ? "noopener noreferrer" : undefined}
+                              referrerpolicy={
+                                external ? "no-referrer" : undefined
+                              }
+                            >
+                              {item.title}
+                            </a>
+                          ) : (
+                            item.title
+                          )}
+                        </h3>
+                        {item.description && <p>{item.description}</p>}
+                      </li>
+                    );
+                  })}
+                </ol>
+              ) : (
+                <div class="activity-diary__empty-state">
+                  <span class="activity-diary__empty-mark" aria-hidden="true">
+                    ♡
+                  </span>
+                  <p>{chapter.emptyText}</p>
+                </div>
+              )}
+
+              {extra.length > 0 && (
+                <details class="activity-more">
+                  <summary>
+                    <span class="activity-more__closed">
+                      もっと見る（残り{extra.length}件）
+                    </span>
+                    <span class="activity-more__opened">閉じる</span>
+                  </summary>
+                  <ol
+                    class="activity-diary__events activity-diary__events--extra"
+                    start={7}
+                  >
+                    {extra.map((item) => {
+                      const href = getSiteOrPublicUrl(item.url ?? null);
+                      const external = href?.startsWith("https://") ?? false;
+
+                      return (
+                        <li>
+                          <time datetime={item.date}>
+                            {formatJapaneseDate(item.date)}
+                          </time>
+                          <h3>
+                            {href ? (
+                              <a
+                                href={href}
+                                target={external ? "_blank" : undefined}
+                                rel={
+                                  external ? "noopener noreferrer" : undefined
+                                }
+                                referrerpolicy={
+                                  external ? "no-referrer" : undefined
+                                }
+                              >
+                                {item.title}
+                              </a>
+                            ) : (
+                              item.title
+                            )}
+                          </h3>
+                          {item.description && <p>{item.description}</p>}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </details>
+              )}
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .activity-diary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(16px, 2.5vw, 28px);
+  }
+
+  .activity-diary__chapter {
+    min-width: 0;
+    padding: clamp(20px, 3vw, 32px);
+    border: 1px solid rgba(174, 213, 233, 0.65);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.76);
+    box-shadow: 0 12px 32px rgba(86, 148, 184, 0.06);
+  }
+
+  .activity-diary__chapter:nth-child(even) {
+    padding-top: clamp(20px, 3vw, 32px);
+  }
+
+  .activity-diary__chapter--news {
+    grid-column: 1 / -1;
+  }
+
+  .activity-diary__heading {
+    padding-left: 36px;
+  }
+
+  .activity-diary__heading > span {
+    top: 2px;
+    font-size: 26px;
+  }
+
+  .activity-diary__heading h2 {
+    margin: 5px 0 0;
+    font-size: clamp(21px, 2.5vw, 28px);
+    line-height: 1.5;
+  }
+
+  .activity-diary__events {
+    margin: 20px 0 0 18px;
+    padding-left: 18px;
+  }
+
+  .activity-diary__events li {
+    padding: 0 0 20px 8px;
+  }
+
+  .activity-diary__events li:last-child {
+    padding-bottom: 2px;
+  }
+
+  .activity-diary__events h3 {
+    margin: 5px 0;
+    font-size: clamp(15px, 1.7vw, 19px);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  .activity-diary__events h3 a {
+    color: inherit;
+    text-underline-offset: 4px;
+  }
+
+  .activity-diary__events p {
+    margin: 5px 0 0;
+    font-size: clamp(13px, 1.4vw, 15px);
+    line-height: 1.85;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+
+  .activity-diary__empty-state {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-height: 100px;
+    margin-top: 20px;
+    padding: 20px 22px;
+    border: 1px dashed rgba(153, 200, 226, 0.62);
+    border-radius: 18px;
+    background: linear-gradient(
+      120deg,
+      rgba(234, 247, 255, 0.64),
+      rgba(255, 255, 255, 0.54)
+    );
+  }
+
+  .activity-diary__empty-mark {
+    flex: 0 0 auto;
+    color: #9cc9df;
+    font-size: 21px;
+    line-height: 1;
+  }
+
+  .activity-diary__empty-state p {
+    margin: 0;
+    color: #7899ac;
+    font-size: clamp(13px, 1.4vw, 15px);
+    line-height: 1.8;
+  }
+
+  .activity-more {
+    margin: 18px 0 0 18px;
+  }
+
+  .activity-more summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 9px 18px;
+    border: 1px solid #baddeb;
+    border-radius: 999px;
+    background: #fff;
+    color: #39728f;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .activity-more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .activity-more__opened,
+  .activity-more[open] .activity-more__closed {
+    display: none;
+  }
+
+  .activity-more[open] .activity-more__opened {
+    display: inline;
+  }
+
+  .activity-diary__events--extra {
+    margin-top: 19px;
+  }
+
+  .activity-more summary:focus-visible,
+  .activity-diary__events a:focus-visible {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 940px) {
+    .activity-diary {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .activity-diary__chapter--news {
+      grid-column: auto;
+    }
+
+    .activity-diary__chapter {
+      padding: 22px 18px;
+    }
+
+    .activity-diary__chapter:nth-child(even) {
+      padding-top: 22px;
+    }
+  }
+</style>
