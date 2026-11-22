@@ -10,11 +10,11 @@
     "streams": [
         {
             "platform": "Twitch",
-            "url": "https://www.twitch.tv/videos/2937184437"
+            "url": "https://www.twitch.tv/nyaru2_ru"
         },
         {
             "platform": "YouTube",
-            "url": "https://www.youtube.com/watch?v=Wut51BAugos"
+            "url": "https://www.youtube.com/@nyaru2_ru"
         }
     ],
     "kind": "event",
