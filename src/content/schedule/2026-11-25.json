@@ -1,0 +1,24 @@
+
+{
+    "published": true,
+    "title": "歌枠配信",
+    "repeat": "once",
+    "date": "2026-11-25",
+    "time": "18:00",
+    "description": "気分で曲決める",
+    "url": "",
+    "platform": "",
+    "streams": [
+        {
+            "platform": "Twitch",
+            "url": "https://www.twitch.tv/nyaru2_ru"
+        },
+        {
+            "platform": "YouTube",
+            "url": "https://www.youtube.com/@nyaru2_ru"
+        }
+    ],
+    "kind": "event",
+    "status": "scheduled",
+    "replacesWeekly": false
+}

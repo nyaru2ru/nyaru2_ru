@@ -1,0 +1,125 @@
+---
+import {
+  fanArtPageSize,
+  fanArtPageCount,
+  fanArtPageUrl,
+  fanArtItems,
+} from "../data/fanArt";
+
+interface Props {
+  page: number;
+}
+
+const { page } = Astro.props;
+const items = fanArtItems.slice(
+  (page - 1) * fanArtPageSize,
+  page * fanArtPageSize,
+);
+---
+
+<div class="fanart-gallery">
+  <div class="fanart-gallery__heading">
+    <h2>
+      Gallery <span aria-hidden="true">☆</span>
+    </h2>
+    <span>{fanArtItems.length} works</span>
+  </div>
+  {items.length > 0 ? (
+    <div class="fanart-gallery__grid" id="fanart-items">
+      {items.map((item, index) => (
+        <figure class="fanart-item">
+          <a
+            href={item.image}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${item.title}の画像を新しいタブで開く`}
+          >
+            <img
+              src={item.image}
+              alt={item.alt || item.title}
+              loading={index < 4 ? "eager" : "lazy"}
+              decoding="async"
+            />
+          </a>
+          <figcaption>
+            <strong>{item.title}</strong>
+            {item.artistUrl ? (
+              <a
+                href={item.artistUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                referrerpolicy="no-referrer"
+              >
+                {item.artist} さん
+              </a>
+            ) : (
+              <span>{item.artist} さん</span>
+            )}
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  ) : (
+    <p class="fanart-gallery__empty">
+      ファンアートは準備中です。許可をいただいた作品をこちらで紹介します。
+    </p>
+  )}
+  {fanArtPageCount > 1 && (
+    <nav class="fanart-pages" aria-label="ファンアートのページ">
+      {page > 1 ? (
+        <a href={fanArtPageUrl(page - 1)} rel="prev">
+          前へ
+        </a>
+      ) : (
+        <span aria-hidden="true">前へ</span>
+      )}
+      <span>
+        {page} / {fanArtPageCount}
+      </span>
+      {page < fanArtPageCount ? (
+        <a href={fanArtPageUrl(page + 1)} rel="next">
+          次へ
+        </a>
+      ) : (
+        <span aria-hidden="true">次へ</span>
+      )}
+    </nav>
+  )}
+</div>
+
+<style>
+  .fanart-pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(12px, 3vw, 24px);
+    margin-top: 24px;
+    color: #437895;
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .fanart-pages a,
+  .fanart-pages > span:first-child,
+  .fanart-pages > span:last-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 8px 18px;
+    border: 1px solid #baddeb;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #317da4;
+    text-decoration: none;
+  }
+
+  .fanart-pages > span:first-child,
+  .fanart-pages > span:last-child {
+    opacity: 0.45;
+  }
+  .fanart-pages a:focus-visible {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+  }
+</style>

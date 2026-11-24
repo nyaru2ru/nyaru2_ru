@@ -1,0 +1,450 @@
+---
+interface Props {
+  images: { src: string }[];
+}
+
+const { images } = Astro.props;
+---
+
+<div
+  class="goods-slideshow"
+  data-goods-slideshow
+  aria-label="グッズのスライドショー"
+>
+  <div class="goods-slideshow__stage" data-goods-stage>
+    <ol class="goods-slideshow__track" data-goods-track>
+      {
+        images.map((image, index) => (
+          <li class="goods-slide">
+            <div class="goods-slide__frame">
+              <img
+                src={image.src}
+                alt={`グッズ画像 ${index + 1}`}
+                loading={index < 4 ? "eager" : "lazy"}
+                decoding="async"
+                draggable="false"
+              />
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+  {
+    images.length > 1 && (
+      <div class="goods-slideshow__controls" data-goods-controls>
+        <div class="goods-slideshow__buttons">
+          <button type="button" data-goods-prev aria-label="前のグッズ画像へ">
+            ‹
+          </button>
+          <button
+            type="button"
+            data-goods-pause
+            aria-pressed="false"
+            aria-label="自動再生を一時停止"
+          >
+            □
+          </button>
+          <button type="button" data-goods-next aria-label="次のグッズ画像へ">
+            ›
+          </button>
+        </div>
+      </div>
+    )
+  }
+  <span
+    class="goods-slideshow__sr-only"
+    aria-live="polite"
+    aria-atomic="true"
+    data-goods-announcement></span>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-goods-slideshow]");
+  const stage = root?.querySelector<HTMLElement>("[data-goods-stage]");
+  const track = root?.querySelector<HTMLOListElement>("[data-goods-track]");
+
+  if (root && stage && track) {
+    const total = track.children.length;
+    const prev = root.querySelector<HTMLButtonElement>("[data-goods-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-goods-next]");
+    const pause = root.querySelector<HTMLButtonElement>("[data-goods-pause]");
+    const announcement = root.querySelector<HTMLElement>(
+      "[data-goods-announcement]",
+    );
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let firstIndex = 0;
+    let animating = false;
+    let userPaused = false;
+    let explicitResume = false;
+    let hovering = false;
+    let focused = false;
+    let inView = true;
+
+    const visibleCount = () =>
+      Math.min(
+        total,
+        Number.parseInt(
+          getComputedStyle(stage).getPropertyValue("--goods-columns"),
+          10,
+        ) || 1,
+      );
+    const canSlide = () => total > visibleCount();
+
+    const warmImages = () => {
+      for (
+        let index = 0;
+        index < Math.min(total, visibleCount() + 1);
+        index++
+      ) {
+        const image = track.children.item(index)?.querySelector("img");
+        if (image) image.loading = "eager";
+      }
+    };
+
+    const update = () => {
+      warmImages();
+      const enabled = canSlide();
+      root.dataset.canSlide = String(enabled);
+      if (prev) prev.disabled = !enabled || animating;
+      if (next) next.disabled = !enabled || animating;
+      if (pause) {
+        pause.disabled = !enabled;
+        pause.setAttribute("aria-pressed", String(userPaused));
+        pause.setAttribute(
+          "aria-label",
+          userPaused ? "自動再生を再開" : "自動再生を一時停止",
+        );
+        pause.textContent = userPaused ? "▶" : "□";
+      }
+    };
+
+    const announce = () => {
+      if (announcement)
+        announcement.textContent = `グッズ画像 ${firstIndex + 1} / ${total}`;
+    };
+
+    const slide = (direction: 1 | -1, manual = false) => {
+      if (animating || !canSlide()) return;
+      const first = track.firstElementChild;
+      const last = track.lastElementChild;
+      if (!first || !last) return;
+
+      const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+      const distance = first.getBoundingClientRect().width + gap;
+      const instant = reducedMotion.matches;
+      firstIndex = (firstIndex + direction + total) % total;
+
+      if (direction === -1)
+        last.querySelector("img")?.setAttribute("loading", "eager");
+
+      if (instant) {
+        if (direction === 1) track.append(first);
+        else track.prepend(last);
+        update();
+        if (manual) announce();
+        return;
+      }
+
+      animating = true;
+      if (direction === -1) {
+        track.prepend(last);
+        track.style.transition = "none";
+        track.style.transform = `translate3d(-${distance}px, 0, 0)`;
+        last.classList.add("is-arriving");
+      } else {
+        const incoming = track.children.item(visibleCount());
+        incoming?.classList.add("is-arriving");
+        track.style.transition = "none";
+        track.style.transform = "translate3d(0, 0, 0)";
+      }
+      void track.offsetWidth;
+      track.style.transition = track.style.transition =
+        "transform 1400ms cubic-bezier(.4, 0, .2, 1)";
+      track.style.transform =
+        direction === 1
+          ? `translate3d(-${distance}px, 0, 0)`
+          : "translate3d(0, 0, 0)";
+      update();
+
+      let done = false;
+      const complete = () => {
+        if (done) return;
+        done = true;
+        track.removeEventListener("transitionend", onTransitionEnd);
+        track.style.transition = "none";
+        if (direction === 1) track.append(first);
+        track.style.transform = "translate3d(0, 0, 0)";
+        track
+          .querySelectorAll(".is-arriving")
+          .forEach((element) => element.classList.remove("is-arriving"));
+        animating = false;
+        update();
+        if (manual) announce();
+      };
+      const onTransitionEnd = (event: TransitionEvent) => {
+        if (event.target === track && event.propertyName === "transform")
+          complete();
+      };
+      track.addEventListener("transitionend", onTransitionEnd);
+      window.setTimeout(complete, 1500);
+    };
+
+    prev?.addEventListener("click", () => slide(-1, true));
+    next?.addEventListener("click", () => slide(1, true));
+    pause?.addEventListener("click", () => {
+      userPaused = !userPaused;
+      explicitResume = !userPaused;
+      update();
+    });
+    root.addEventListener("pointerenter", () => {
+      hovering = true;
+      explicitResume = false;
+    });
+    root.addEventListener("pointerleave", () => {
+      hovering = false;
+    });
+    root.addEventListener("focusin", () => {
+      focused = true;
+      explicitResume = false;
+    });
+    root.addEventListener("focusout", (event) => {
+      focused =
+        event.relatedTarget instanceof Node &&
+        root.contains(event.relatedTarget);
+    });
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          inView = entry?.isIntersecting ?? false;
+        },
+        { threshold: 0.05 },
+      );
+      observer.observe(root);
+    }
+
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(update).observe(stage);
+    } else {
+      window.addEventListener("resize", update);
+    }
+    reducedMotion.addEventListener("change", update);
+
+    window.setInterval(() => {
+      if (
+        !userPaused &&
+        (explicitResume || (!hovering && !focused)) &&
+        inView &&
+        !document.hidden &&
+        !reducedMotion.matches
+      ) {
+        slide(1);
+      }
+    }, 2800);
+    update();
+  }
+</script>
+
+<style>
+  .goods-slideshow {
+    container-type: inline-size;
+    min-width: 0;
+  }
+
+  .goods-slideshow__stage {
+    --goods-columns: 1;
+    --goods-gap: 14px;
+    overflow: hidden;
+    min-width: 0;
+    padding: 6px 2px 12px;
+    border-radius: 24px;
+  }
+
+  .goods-slideshow__track {
+    display: flex;
+    gap: var(--goods-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .goods-slide {
+    flex: 0 0
+      calc(
+        (100% - (var(--goods-columns) - 1) * var(--goods-gap)) /
+          var(--goods-columns)
+      );
+    min-width: 0;
+    perspective: 900px;
+  }
+
+  .goods-slide__frame {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 10px;
+    border: 1px solid rgba(202, 226, 239, 0.9);
+    border-radius: 21px 29px 22px 30px;
+    background: rgba(255, 255, 255, 0.84);
+    box-shadow: 0 7px 18px rgba(111, 166, 194, 0.1);
+    backface-visibility: hidden;
+  }
+
+  .goods-slide:nth-child(even) .goods-slide__frame {
+    border-radius: 29px 21px 30px 22px;
+  }
+
+  .goods-slide__frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    user-select: none;
+  }
+
+  .goods-slide__frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 32%,
+      rgba(209, 239, 255, 0.55) 50%,
+      transparent 68%
+    );
+    transform: translateX(-100%);
+  }
+
+  .goods-slide.is-arriving .goods-slide__frame {
+    animation: goods-card-flip 1400ms ease-in-out both;
+  }
+
+  .goods-slide.is-arriving .goods-slide__frame::after {
+    animation: goods-card-wipe 1400ms ease-in-out both;
+  }
+
+  @keyframes goods-card-flip {
+    from {
+      transform: rotateY(-5deg) scale(0.99);
+    }
+    to {
+      transform: rotateY(0) scale(1);
+    }
+  }
+
+  @keyframes goods-card-wipe {
+    0% {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  .goods-slideshow__controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 2px 3px;
+  }
+
+  .goods-slideshow[data-can-slide="false"] .goods-slideshow__controls {
+    display: none;
+  }
+
+  .goods-slideshow__buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .goods-slideshow__buttons button {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid #d3eaf5;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.88);
+    color: #407d9f;
+    font-size: 20px;
+    line-height: 1;
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .goods-slideshow__buttons button:hover:not(:disabled) {
+    background: #e7f6ff;
+    transform: translateY(-2px);
+  }
+
+  .goods-slideshow__buttons button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .goods-slideshow__buttons [data-goods-pause] {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+  }
+
+  .goods-slideshow__buttons [data-goods-pause][aria-pressed="true"] {
+    font-size: 16px;
+  }
+
+  .goods-slideshow__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @container (min-width: 540px) {
+    .goods-slideshow__stage {
+      --goods-columns: 2;
+    }
+  }
+
+  @container (min-width: 900px) {
+    .goods-slideshow__stage {
+      --goods-columns: 4;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .goods-slide.is-arriving .goods-slide__frame,
+    .goods-slide.is-arriving .goods-slide__frame::after {
+      animation: none;
+    }
+
+    .goods-slideshow__buttons [data-goods-pause] {
+      display: none;
+    }
+    .goods-slideshow__buttons button {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,13 @@
+{
+    "published": true,
+    "title": "OW配信",
+    "repeat": "once",
+    "date": "2026-11-26",
+    "time": "18:00",
+    "description": "タンク練習#1",
+    "url": "https://www.twitch.tv/nyaru2_ru",
+    "platform": "Twitch",
+    "kind": "event",
+    "status": "scheduled",
+    "replacesWeekly": false
+}

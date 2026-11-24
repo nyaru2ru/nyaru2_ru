@@ -1,0 +1,13 @@
+{
+    "published": true,
+    "title": "歌枠配信",
+    "repeat": "once",
+    "date": "2026-11-18",
+    "time": "18:00",
+    "description": "リクエストのあった冬曲・切ない曲を歌ってみる",
+    "url": "https://www.twitch.tv/videos/2932167772",
+    "platform": "Twitch",
+    "kind": "event",
+    "status": "scheduled",
+    "replacesWeekly": false
+}

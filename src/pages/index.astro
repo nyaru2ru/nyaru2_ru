@@ -1,0 +1,712 @@
+---
+import PeekCharacter from "../components/PeekCharacter.astro";
+import { formatJapaneseDate } from "../lib/formatJapaneseDate";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WeeklyCalendar from "../components/WeeklyCalendar.astro";
+import HomeAbout from "../components/HomeAbout.astro";
+import { site } from "../data/site";
+import { pageText } from "../data/pages";
+import mediaData from "../content/media.json";
+import { activityItems } from "../data/activity";
+import { socialLinks, getPublicUrl } from "../data/links";
+
+const mainVisualImage =
+  typeof mediaData.mainVisual === "string" &&
+  /^\/images\/[^/\\?#]+\.(png|jpe?g|webp|avif)$/i.test(mediaData.mainVisual)
+    ? mediaData.mainVisual
+    : pageText.home.mainVisualImage;
+
+const media = socialLinks
+  .map((item) => ({ ...item, href: getPublicUrl(item.url) }))
+  .filter((item) => item.href);
+const news = [...activityItems]
+  .filter((item) => item.category === "news")
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .slice(0, 3);
+---
+
+<BaseLayout title="Home">
+  <div class="home">
+    <section class="home-hero" aria-labelledby="home-title">
+      <div class="home-hero__sky" aria-hidden="true">
+        <span class="home-hero__sky-mark home-hero__sky-mark--start">♡</span>
+        <span class="home-hero__sky-mark home-hero__sky-mark--top">☆</span>
+        <span class="home-hero__sky-mark home-hero__sky-mark--turn">♡</span>
+        <span class="home-hero__sky-mark home-hero__sky-mark--end">☆</span>
+      </div>
+      <div class="container home-hero__inner">
+        <div class="home-hero__copy">
+          <div class="home-hero__headline">
+            <p class="eyebrow">WELCOME</p>
+            <h1 id="home-title">
+              {pageText.home.heroFirst}
+              <br />
+              <span>{pageText.home.heroAccent}</span>
+              {pageText.home.heroLast && <br />}
+              {pageText.home.heroLast}
+            </h1>
+            <p class="home-hero__name">{site.fullName}</p>
+          </div>
+          {pageText.home.heroImage && (
+            <div class="home-hero__logo-space">
+              <img
+                src={pageText.home.heroImage}
+                alt="ホームロゴ"
+                class="home-hero__logo"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+          )}
+          <div class="home-hero__summary">
+            <p class="home-hero__lead">{pageText.home.introduction}</p>
+            {media.length > 0 && (
+              <div class="home-hero__media" aria-label="SNSリンク">
+                {media.map((item) => (
+                  <a
+                    href={item.href!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    referrerpolicy="no-referrer"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <div class="home-visual" aria-label="メインビジュアル">
+          <div class="home-visual__glow" aria-hidden="true"></div>
+          <div
+            class="home-visual__back home-visual__back--one"
+            aria-hidden="true"
+          ></div>
+          <div
+            class="home-visual__back home-visual__back--two"
+            aria-hidden="true"
+          ></div>
+          <div class="home-visual__frame">
+            <div class="home-visual__shape">
+              {mainVisualImage ? (
+                <img
+                  src={mainVisualImage}
+                  alt={pageText.home.mainVisualAlt}
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
+                  class="home-visual__image"
+                />
+              ) : (
+                <p>{pageText.home.mainVisualPlaceholder}</p>
+              )}
+            </div>
+          </div>
+          <span
+            class="home-visual__deco home-visual__deco--one"
+            aria-hidden="true"
+          >
+            ☆
+          </span>
+          <span
+            class="home-visual__deco home-visual__deco--two"
+            aria-hidden="true"
+          >
+            ♡
+          </span>
+        </div>
+        <div class="home-hero__actions">
+          <a class="soft-link soft-link--blue" href="/about/">
+            プロフィールを見る
+          </a>
+          <a class="soft-link soft-link--white" href="/social/">
+            配信・SNSを見る
+          </a>
+          <span class="home-hero__action-star" aria-hidden="true">
+            ☆
+          </span>
+        </div>
+      </div>
+      <div class="home-hero__bottom" aria-hidden="true"></div>
+    </section>
+
+    <section class="home-dashboard" aria-label="1週間の予定と最新情報">
+      <div class="container home-dashboard__inner">
+        <div class="home-dashboard__calendar">
+          <WeeklyCalendar compact />
+        </div>
+
+        <div class="home-dashboard__right">
+          <section
+            class="home-dashboard__item"
+            aria-labelledby="home-news-title"
+          >
+            <p class="eyebrow">NEWS</p>
+            <h2 id="home-news-title">
+              最近のお知らせ<span aria-hidden="true"> ♡</span>
+            </h2>
+            <p class="home-dashboard__description">
+              新しいお知らせはこちらから。
+            </p>
+            {news.length > 0 && (
+              <div class="home-dashboard__news-list">
+                {news.map((item) => (
+                  <article class="home-dashboard__news">
+                    <time datetime={item.date}>
+                      {formatJapaneseDate(item.date)}
+                    </time>
+                    <h3>{item.title}</h3>
+                    {item.description && <p>{item.description}</p>}
+                  </article>
+                ))}
+              </div>
+            )}
+            <a class="text-arrow" href="/activity/">
+              活動情報をもっと見る
+            </a>
+          </section>
+
+          <section
+            class="home-dashboard__item"
+            aria-labelledby="home-social-title"
+          >
+            <p class="eyebrow">STAY CONNECTED</p>
+            <h2 id="home-social-title">最新情報をチェック</h2>
+            <p class="home-dashboard__description">
+              活動のお知らせや更新情報はこちらから。
+            </p>
+            <div class="home-dashboard__links">
+              <a href="/social/">
+                公式SNS <span aria-hidden="true">↗</span>
+              </a>
+              <a href="/activity/">
+                活動情報 <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </section>
+
+          <section
+            class="home-dashboard__item"
+            aria-labelledby="home-next-title"
+          >
+            <p class="eyebrow">UP NEXT</p>
+            <h2 id="home-next-title">次の予定</h2>
+            <div
+              class="home-dashboard__upcoming"
+              data-home-calendar-upcoming
+              aria-live="polite"
+              aria-label="次の予定"
+            >
+              <p>予定を読み込み中です。</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <HomeAbout />
+
+    <section class="home-wander" aria-labelledby="home-wander-title">
+      <div class="container">
+        <p class="eyebrow">EXPLORE</p>
+        <h2 id="home-wander-title">いろいろ、のぞいてみる</h2>
+        <div class="home-wander__paths">
+          <a class="home-wander__path" href="/activity/">
+            <span aria-hidden="true">♡</span>
+            <strong>Activity</strong>
+            <small>{pageText.home.activityFeature}</small>
+          </a>
+          <a class="home-wander__path" href="/contents/">
+            <span aria-hidden="true">♡</span>
+            <strong>Contents</strong>
+            <small>{pageText.home.contentsFeature}</small>
+          </a>
+          <a class="home-wander__path" href="/fan-art/">
+            <span aria-hidden="true">♡</span>
+            <strong>Fan Art</strong>
+            <small>ファンアートを見に行く</small>
+          </a>
+          <a class="home-wander__path" href="/social/">
+            <span aria-hidden="true">♡</span>
+            <strong>Social</strong>
+            <small>{pageText.home.socialFeature}</small>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-goodbye">
+      <div class="container home-goodbye__inner">
+        <div>
+          <p class="eyebrow">CONTACT</p>
+          <h2>お問い合わせ</h2>
+          <p>{pageText.home.contact}</p>
+        </div>
+        <a class="soft-link soft-link--blue" href="/contact/">
+          お問い合わせはこちら
+        </a>
+      </div>
+    </section>
+  </div>
+  <PeekCharacter />
+</BaseLayout>
+
+<style>
+  .home-dashboard {
+    padding: clamp(30px, 4vw, 52px) 0 clamp(40px, 5vw, 64px);
+    background: linear-gradient(160deg, #e6f4fc, #f8fcff 54%, #f0f8ff);
+  }
+
+  .home-dashboard__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    align-items: start;
+    gap: clamp(18px, 2.4vw, 30px);
+  }
+
+  .home-dashboard__calendar,
+  .home-dashboard__right {
+    min-width: 0;
+  }
+
+  .home-dashboard__right {
+    padding: clamp(20px, 2.5vw, 30px);
+    border: 1px solid rgba(174, 213, 233, 0.7);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 17px 43px rgba(86, 148, 184, 0.07);
+  }
+
+  .home-dashboard__item {
+    min-width: 0;
+    padding-block: clamp(18px, 2.2vw, 26px);
+  }
+
+  .home-dashboard__item:first-child {
+    padding-top: 0;
+  }
+
+  .home-dashboard__item:last-child {
+    padding-bottom: 0;
+  }
+
+  .home-dashboard__item + .home-dashboard__item {
+    border-top: 1px solid #d7eaf4;
+  }
+
+  .home-dashboard__item .eyebrow {
+    margin: 0 0 8px;
+  }
+
+  .home-dashboard__item h2 {
+    margin: 0;
+    color: #356682;
+    font-size: clamp(20px, 2.1vw, 27px);
+    line-height: 1.45;
+  }
+
+  .home-dashboard__item h2 span {
+    color: #9fcce5;
+    font-size: 0.7em;
+  }
+
+  .home-dashboard__description {
+    margin: 8px 0 12px;
+    color: #718fa1;
+    font-size: clamp(12px, 1.25vw, 14px);
+    line-height: 1.8;
+  }
+
+  .home-dashboard__news-list {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+    margin: 0 0 14px;
+  }
+
+  .home-dashboard__news {
+    min-width: 0;
+    padding-left: 12px;
+    border-left: 3px solid #b5ddef;
+  }
+
+  .home-dashboard__news time {
+    color: #6299b9;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .home-dashboard__news h3 {
+    margin: 4px 0;
+    color: #376681;
+    font-size: clamp(14px, 1.5vw, 17px);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .home-dashboard__news p {
+    margin: 0;
+    color: #718e9f;
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+
+  .home-dashboard__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+
+  .home-dashboard__links a {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    min-height: 42px;
+    padding: 9px 15px;
+    border: 1px solid #baddeb;
+    border-radius: 999px;
+    background: linear-gradient(145deg, #f9fdff, #eaf7ff);
+    color: #317da4;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .home-dashboard__links a:hover {
+    background: #ddf1fc;
+  }
+
+  .home-dashboard__links a:focus-visible,
+  .home-dashboard__item .text-arrow:focus-visible {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+  }
+
+  .home-dashboard__upcoming {
+    min-width: 0;
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px solid rgba(159, 207, 231, 0.67);
+    border-radius: 16px;
+    background: #f3faff;
+    color: #265b7b;
+    font-size: clamp(14px, 1.5vw, 17px);
+    font-weight: 700;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+
+  .home-dashboard__upcoming :global(p) {
+    margin: 0;
+  }
+
+  .home-dashboard__upcoming :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .home-dashboard__upcoming :global(a:focus-visible) {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 1050px) {
+    .home-dashboard__inner {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .home-dashboard__right {
+      width: min(100%, 760px);
+      margin-inline: auto;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .home-dashboard__right {
+      padding: 22px 17px;
+      border-radius: 22px;
+    }
+
+    .home-dashboard__item {
+      padding-block: 18px;
+    }
+
+    .home-dashboard__item h2 {
+      font-size: 21px;
+    }
+  }
+
+  .home-hero {
+    --home-hero-padding-top: clamp(16px, 2.2vw, 28px);
+    --home-hero-padding-bottom: clamp(14px, 2vw, 26px);
+    --home-hero-row-gap: clamp(8px, 1.3vw, 14px);
+    min-height: 0;
+    height: auto;
+    padding-block: var(--home-hero-padding-top) var(--home-hero-padding-bottom);
+  }
+
+  .home-visual {
+    --home-visual-width: 370px;
+    width: min(100%, var(--home-visual-width));
+    height: auto;
+    aspect-ratio: auto;
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+  }
+
+  .home-visual__back {
+    inset: 4%;
+  }
+
+  .home-visual__frame {
+    position: relative;
+    inset: auto;
+    transform: none;
+    width: 94%;
+    height: auto;
+    aspect-ratio: auto;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .home-visual__shape {
+    position: relative;
+    inset: auto;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    padding: clamp(8px, 1.6vw, 12px);
+    box-sizing: border-box;
+    border-radius: clamp(16px, 3vw, 24px);
+    clip-path: none;
+    overflow: hidden;
+  }
+
+  .home-visual__shape .home-visual__image {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: none;
+    margin: 0;
+    transform: none;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .home-hero__inner {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    grid-template-areas:
+      "copy visual"
+      "copy actions";
+    align-items: stretch;
+    min-height: 0;
+    height: auto;
+    padding-block: 0;
+    column-gap: clamp(26px, 5vw, 78px);
+    row-gap: var(--home-hero-row-gap);
+  }
+
+  .home-hero__copy {
+    grid-area: copy;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0;
+    min-width: 0;
+    min-height: 0;
+    padding-top: 0;
+  }
+
+  .home-hero__logo-space {
+    --home-logo-width: 640px;
+    --home-logo-max-height: 320px;
+    --home-logo-gap-top: 6px;
+    --home-logo-gap-bottom: 8px;
+    --home-logo-offset-x: 0px;
+    --home-logo-offset-y: 0px;
+    --home-logo-float-distance: 5px;
+    --home-logo-float-duration: 4.5s;
+    width: 100%;
+    min-width: 0;
+    padding: var(--home-logo-gap-top) 0 var(--home-logo-gap-bottom);
+    box-sizing: border-box;
+    animation: home-logo-float var(--home-logo-float-duration) ease-in-out
+      infinite;
+  }
+
+  @keyframes home-logo-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(calc(0px - var(--home-logo-float-distance)));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero__logo-space {
+      animation: none;
+    }
+  }
+
+  .home-hero__headline,
+  .home-hero__summary {
+    position: relative;
+    z-index: 2;
+  }
+
+  .home-hero__summary {
+    padding-bottom: 0;
+  }
+
+  .home-hero__logo {
+    display: block;
+    width: min(100%, var(--home-logo-width));
+    height: auto;
+    max-height: var(--home-logo-max-height);
+    object-fit: contain;
+    object-position: left center;
+    transform: translate(var(--home-logo-offset-x), var(--home-logo-offset-y));
+    pointer-events: none;
+  }
+
+  .home-hero__actions {
+    grid-area: actions;
+    position: relative;
+    z-index: 2;
+    justify-self: end;
+    align-self: end;
+    justify-content: flex-end;
+    margin: 0 12px 0 0;
+    padding-bottom: 0;
+  }
+
+  .home-hero__action-star {
+    position: absolute;
+    right: -20px;
+    bottom: -24px;
+    color: #81b7d6;
+    opacity: 0.55;
+    font-size: 23px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .home-hero__sky-mark {
+    animation: none;
+    opacity: 0.75;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--start {
+    left: 4%;
+    top: 12%;
+    font-size: 25px;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--top {
+    left: auto;
+    right: 7%;
+    top: 9%;
+    font-size: 34px;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--turn {
+    left: 5%;
+    top: auto;
+    bottom: 20%;
+    font-size: 25px;
+  }
+
+  .home-hero__sky .home-hero__sky-mark--end {
+    left: auto;
+    right: 4%;
+    top: auto;
+    bottom: 8%;
+    font-size: 20px;
+  }
+
+  .home-visual {
+    grid-area: visual;
+    justify-self: end;
+  }
+
+  .home-visual__deco--one {
+    top: 6%;
+    right: 4%;
+    font-size: 30px;
+  }
+
+  .home-visual__deco--two {
+    left: 2%;
+    right: auto;
+    bottom: 17%;
+    font-size: 22px;
+  }
+
+  @media (max-width: 760px) {
+    .home-hero {
+      --home-hero-padding-top: 14px;
+      --home-hero-padding-bottom: 18px;
+      --home-hero-row-gap: 12px;
+    }
+
+    .home-hero__inner {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "copy"
+        "visual"
+        "actions";
+      row-gap: var(--home-hero-row-gap);
+    }
+
+    .home-hero__copy {
+      padding-top: 0;
+    }
+
+    .home-hero__logo-space {
+      --home-logo-width: 360px;
+      --home-logo-max-height: 220px;
+    }
+
+    .home-hero__summary {
+      padding-bottom: 0;
+    }
+
+    .home-visual {
+      justify-self: center;
+      order: initial;
+    }
+
+    .home-hero__actions {
+      justify-self: start;
+      justify-content: flex-start;
+      margin: 0;
+    }
+
+    .home-hero__sky .home-hero__sky-mark--turn,
+    .home-hero__sky .home-hero__sky-mark--end,
+    .home-hero__action-star {
+      display: none;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .home-visual {
+      --home-visual-width: 280px;
+    }
+  }
+</style>

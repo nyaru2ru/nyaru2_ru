@@ -1,0 +1,388 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import VideoEmbed from "../components/VideoEmbed.astro";
+import { socialLinks, getPublicUrl } from "../data/links";
+import {
+  xAccounts,
+  featuredVideos,
+  twitchArchives,
+  twitchClips,
+} from "../data/social";
+import { pageText } from "../data/pages";
+
+const links = socialLinks.map((item) => ({
+  ...item,
+  href: getPublicUrl(item.url),
+}));
+const hasTwitchMedia = twitchArchives.length > 0 || twitchClips.length > 0;
+---
+
+<BaseLayout title="Social">
+  <section class="section social-page">
+    <div class="container">
+      <PageHeader
+        label="SOCIAL"
+        title="つながる場所"
+        description={pageText.social.introduction}
+      />
+      <div class="social-stream">
+        {links.map((item) => (
+          <article
+            class:list={[
+              "social-stream__line",
+              {
+                "social-stream__line--videos":
+                  (item.id === "youtube" && featuredVideos.length > 0) ||
+                  (item.id === "twitch" && hasTwitchMedia),
+                "social-stream__line--x": item.id === "x",
+              },
+            ]}
+          >
+            <span class="social-stream__symbol" aria-hidden="true">
+              ♡
+            </span>
+            <div class="social-page__intro">
+              <h2>{item.label}</h2>
+              {item.description && <p>{item.description}</p>}
+            </div>
+            {item.id !== "x" &&
+              (item.href ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  referrerpolicy="no-referrer"
+                  aria-label={`${item.label}を新しいタブで開く`}
+                >
+                  見てみる
+                </a>
+              ) : (
+                <span class="social-stream__soon">準備中</span>
+              ))}
+            {item.id === "twitch" && hasTwitchMedia && (
+              <div class="social-page__twitch-media" aria-label="Twitchの動画">
+                {twitchArchives.length > 0 && (
+                  <section
+                    class="social-page__twitch-section"
+                    aria-labelledby="social-twitch-archives-title"
+                  >
+                    <h3
+                      id="social-twitch-archives-title"
+                      class="social-page__media-heading"
+                    >
+                      アーカイブ
+                    </h3>
+                    <div class="social-page__videos">
+                      {twitchArchives.map((video) => (
+                        <div class="social-page__video">
+                          <h4>
+                            <a
+                              href={video.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              referrerpolicy="no-referrer"
+                            >
+                              {video.title}
+                              <span aria-hidden="true"></span>
+                            </a>
+                          </h4>
+                          <div
+                            class="social-page__video-frame"
+                            data-twitch-archive={video.videoId}
+                            data-video-title={video.title}
+                          >
+                            <p>アーカイブを読み込んでいます。</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+                {twitchClips.length > 0 && (
+                  <section
+                    class="social-page__twitch-section"
+                    aria-labelledby="social-twitch-clips-title"
+                  >
+                    <h3
+                      id="social-twitch-clips-title"
+                      class="social-page__media-heading"
+                    >
+                      クリップ
+                    </h3>
+                    <div class="social-page__videos">
+                      {twitchClips.map((clip) => (
+                        <div class="social-page__video">
+                          <h4>
+                            <a
+                              href={clip.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              referrerpolicy="no-referrer"
+                            >
+                              {clip.title}
+                              <span aria-hidden="true"></span>
+                            </a>
+                          </h4>
+                          <div
+                            class="social-page__video-frame"
+                            data-twitch-clip={clip.clipSlug}
+                            data-video-title={clip.title}
+                          >
+                            <p>クリップを読み込んでいます。</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </div>
+            )}
+            {item.id === "youtube" && featuredVideos.length > 0 && (
+              <div class="social-page__videos" aria-label="おすすめ動画">
+                {featuredVideos.map((video) => (
+                  <div class="social-page__video">
+                    <h3>
+                      <a
+                        href={video.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        referrerpolicy="no-referrer"
+                      >
+                        {video.title}
+                        <span aria-hidden="true"></span>
+                      </a>
+                    </h3>
+                    <VideoEmbed videoId={video.videoId} title={video.title} />
+                  </div>
+                ))}
+              </div>
+            )}
+            {item.id === "x" && (
+              <div class="social-page__accounts">
+                {xAccounts.map((account) => (
+                  <div class="social-page__account">
+                    <div>
+                      <h3>{account.label}</h3>
+                      {account.description && <p>{account.description}</p>}
+                    </div>
+                    {account.href ? (
+                      <a
+                        href={account.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        referrerpolicy="no-referrer"
+                      >
+                        見てみる <span aria-hidden="true"></span>
+                      </a>
+                    ) : (
+                      <span class="social-page__pending">準備中</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function setupTwitchEmbeds() {
+    document
+      .querySelectorAll<HTMLElement>(
+        "[data-twitch-archive], [data-twitch-clip]",
+      )
+      .forEach((element) => {
+        if (element.dataset.ready === "true") return;
+
+        const archiveId = element.dataset.twitchArchive;
+        const clipSlug = element.dataset.twitchClip;
+        const parent = window.location.hostname;
+        if (!parent) return;
+
+        let url: URL;
+        if (archiveId && /^\d+$/.test(archiveId)) {
+          url = new URL("https://player.twitch.tv/");
+          url.searchParams.set("video", `v${archiveId}`);
+        } else if (clipSlug && /^[A-Za-z0-9_-]+$/.test(clipSlug)) {
+          url = new URL("https://clips.twitch.tv/embed");
+          url.searchParams.set("clip", clipSlug);
+        } else {
+          return;
+        }
+
+        url.searchParams.set("parent", parent);
+        url.searchParams.set("autoplay", "false");
+
+        const iframe = document.createElement("iframe");
+        iframe.src = url.href;
+        iframe.title = element.dataset.videoTitle || "Twitch動画";
+        iframe.loading = "lazy";
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.allow = "autoplay; fullscreen; picture-in-picture";
+        iframe.setAttribute("allowfullscreen", "");
+
+        element.replaceChildren(iframe);
+        element.dataset.ready = "true";
+      });
+  }
+
+  setupTwitchEmbeds();
+  document.addEventListener("astro:page-load", setupTwitchEmbeds);
+</script>
+
+<style>
+  .social-page__intro {
+    min-width: 0;
+  }
+
+  .social-stream__line--videos .social-page__videos {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .social-stream__line--videos .social-page__twitch-media {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .social-page__twitch-section + .social-page__twitch-section {
+    margin-top: 26px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(174, 213, 233, 0.65);
+  }
+
+  .social-page__media-heading {
+    margin: 0 0 14px;
+    color: #367293;
+    font-size: clamp(16px, 1.8vw, 20px);
+  }
+
+  .social-stream__line--x .social-page__accounts {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .social-stream__line--videos > a,
+  .social-stream__line--videos > .social-stream__soon {
+    grid-column: 2 / -1;
+    grid-row: 3;
+    justify-self: end;
+  }
+  .social-page__video-frame {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #e6f3fc;
+  }
+
+  .social-page__video-frame :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .social-page__video-frame p {
+    margin: 0;
+    padding: 15px;
+    color: #547b92;
+  }
+
+  .social-page__videos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 24px);
+    margin-top: 6px;
+  }
+
+  .social-page__video {
+    min-width: 0;
+  }
+
+  .social-page__video h3,
+  .social-page__video h4 {
+    margin: 0 0 9px;
+    color: #367293;
+    font-size: clamp(13px, 1.4vw, 16px);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .social-page__video a {
+    color: inherit;
+    text-underline-offset: 4px;
+  }
+
+  .social-page__accounts {
+    display: grid;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .social-page__account {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 16px;
+    padding: 12px 16px;
+    border: 1px solid rgba(174, 213, 233, 0.65);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.67);
+  }
+
+  .social-page__account h3 {
+    margin: 0;
+    font-size: 15px;
+    color: #367293;
+  }
+
+  .social-page__account p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #7392a5;
+  }
+
+  .social-page__account a,
+  .social-page__pending {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 15px;
+    border-radius: 999px;
+    background: #fff;
+    color: #4c89a9;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .social-page__pending {
+    color: #91a9b8;
+  }
+
+  .social-page__video a:focus-visible,
+  .social-page__account a:focus-visible {
+    outline: 3px solid #559cc5;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 1050px) {
+    .social-page__videos {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

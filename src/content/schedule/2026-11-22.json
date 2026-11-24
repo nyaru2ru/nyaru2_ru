@@ -1,0 +1,23 @@
+{
+    "published": true,
+    "title": "1周年記念配信🪽",
+    "repeat": "once",
+    "date": "2026-11-22",
+    "time": "20:00",
+    "description": "デビューから1周年を記念して特別な配信します！",
+    "url": "",
+    "platform": "",
+    "streams": [
+        {
+            "platform": "Twitch",
+            "url": "https://www.twitch.tv/videos/2937184437"
+        },
+        {
+            "platform": "YouTube",
+            "url": "https://www.youtube.com/watch?v=Wut51BAugos"
+        }
+    ],
+    "kind": "event",
+    "status": "scheduled",
+    "replacesWeekly": false
+}
